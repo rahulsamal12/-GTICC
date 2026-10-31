@@ -20,6 +20,7 @@ export function getPool(): mysql.Pool {
       queueLimit: 0,
       enableKeepAlive: true,
       keepAliveInitialDelay: 10000,
+      timezone: '+00:00',
     });
   }
   return pool;

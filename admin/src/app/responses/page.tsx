@@ -229,12 +229,14 @@ export default function ResponsesPage() {
   const formatDate = (iso: string) => {
     if (!iso) return '—';
     try {
-      return new Date(iso).toLocaleDateString('en-US', {
+      return new Date(iso).toLocaleString('en-US', {
+        timeZone: 'Asia/Kolkata',
         year: 'numeric',
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
+        hour12: true,
       });
     } catch {
       return iso;
