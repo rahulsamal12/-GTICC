@@ -261,7 +261,6 @@ export default function TimezoneSelect({
       <input
         type="hidden"
         name={name}
-        id={id}
         value={value}
         required={required}
       />
@@ -270,6 +269,7 @@ export default function TimezoneSelect({
       <button
         ref={triggerRef}
         type="button"
+        id={id}
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
