@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String              @id @default(uuid())
+  name         String              @db.VarChar(191)
+  email        String              @unique(map: "idx_admins_email") @db.VarChar(191)
+  passwordHash String              @map("password_hash") @db.VarChar(191)
+  role         String              @default("ADMIN") @db.VarChar(50)
+  isActive     Boolean             @default(true) @map("is_active")
+  lastLoginAt  DateTime?           @map("last_login_at")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+  reviews      ApplicationReview[]
+
+  @@map("admins")
+}
+
+model BusinessApplication {
+  id                    String              @id @default(uuid())
+  legalEntityName       String              @map("legal_entity_name") @db.VarChar(191)
+  corporateWebsite      String?             @map("corporate_website") @db.VarChar(191)
+  repFullName           String              @map("rep_full_name") @db.VarChar(191)
+  corporateTitle        String              @map("corporate_title") @db.VarChar(191)
+  corporateEmail        String              @map("corporate_email") @db.VarChar(191)
+  countryCode           String              @map("country_code") @db.VarChar(50)
+  directPhone           String              @map("direct_phone") @db.VarChar(100)
+  hqCityCountry         String              @map("hq_city_country") @db.VarChar(191)
+  additionalLocations   String?             @map("additional_locations") @db.Text
+  primaryIndustrySector String              @map("primary_industry_sector") @db.VarChar(191)
+  otherIndustrySector   String?             @map("other_industry_sector") @db.VarChar(191)
+  primaryBusinessModel  String              @map("primary_business_model") @db.VarChar(191)
+  annualTurnover        String              @map("annual_turnover") @db.VarChar(191)
+  eximStatus            String              @map("exim_status") @db.VarChar(191)
+  targetMarkets         Json                @map("target_markets")
+  tradeObjectives       Json                @map("trade_objectives")
+  authOfficerName       String              @map("auth_officer_name") @db.VarChar(191)
+  authCorporateTitle    String              @map("auth_corporate_title") @db.VarChar(191)
+  authCorporateEmail    String              @map("auth_corporate_email") @db.VarChar(191)
+  authSubmissionDate    String              @map("auth_submission_date") @db.VarChar(191)
+  authSignatureSeal     String              @map("auth_signature_seal") @db.VarChar(191)
+  affirmation           Boolean             @default(true)
+  status                String              @default("PENDING") @db.VarChar(50)
+  adminNotes            String?             @map("admin_notes") @db.Text
+  reviewedBy            String?             @map("reviewed_by") @db.VarChar(191)
+  reviewedAt            DateTime?           @map("reviewed_at")
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+  reviews               ApplicationReview[]
+
+  @@index([status], map: "idx_biz_status")
+  @@index([corporateEmail], map: "idx_biz_email")
+  @@index([createdAt], map: "idx_biz_created_at")
+  @@map("business_applications")
+}
+
+model LeadershipApplication {
+  id                       String              @id @default(uuid())
+  fullName                 String              @map("full_name") @db.VarChar(191)
+  officialEmail            String              @map("official_email") @db.VarChar(191)
+  countryCode              String              @map("country_code") @db.VarChar(50)
+  mobileWhatsApp           String              @map("mobile_whatsapp") @db.VarChar(100)
+  cityCountry              String              @map("city_country") @db.VarChar(191)
+  timeZoneGmt              String              @map("time_zone_gmt") @db.VarChar(100)
+  currentDesignation       String              @map("current_designation") @db.VarChar(191)
+  organizationFirm         String              @map("organization_firm") @db.VarChar(191)
+  website                  String?             @db.VarChar(191)
+  primaryIndustryDomain    String              @map("primary_industry_domain") @db.VarChar(191)
+  otherIndustryDomain      String?             @map("other_industry_domain") @db.VarChar(191)
+  strategicEngagement      Json                @map("strategic_engagement")
+  geographicMarkets        Json                @map("geographic_markets")
+  linkedInUrl              String?             @map("linkedin_url") @db.VarChar(255)
+  executiveSummary         String?             @map("executive_summary") @db.Text
+  candidateName            String              @map("candidate_name") @db.VarChar(191)
+  attestationDate          String              @map("attestation_date") @db.VarChar(191)
+  digitalSignature         String              @map("digital_signature") @db.VarChar(191)
+  attestationOfficialEmail String              @map("attestation_official_email") @db.VarChar(191)
+  attestationCheck         Boolean             @default(true) @map("attestation_check")
+  status                   String              @default("pending") @db.VarChar(50)
+  adminNotes               String?             @map("admin_notes") @db.Text
+  reviewedBy               String?             @map("reviewed_by") @db.VarChar(191)
+  reviewedAt               DateTime?           @map("reviewed_at")
+  createdAt                DateTime            @default(now()) @map("created_at")
+  updatedAt                DateTime            @updatedAt @map("updated_at")
+  reviews                  ApplicationReview[]
+
+  @@index([status], map: "idx_lead_status")
+  @@index([officialEmail], map: "idx_lead_email")
+  @@index([createdAt], map: "idx_lead_created_at")
+  @@map("leadership_applications")
+}
+
+model GeneralApplication {
+  id                 String    @id @default(uuid())
+  fullName           String    @map("full_name") @db.VarChar(191)
+  orgName            String    @map("org_name") @db.VarChar(191)
+  designation        String?   @db.VarChar(191)
+  email              String    @db.VarChar(191)
+  phone              String?   @db.VarChar(100)
+  country            String?   @db.VarChar(191)
+  city               String?   @db.VarChar(191)
+  website            String?   @db.VarChar(255)
+  linkedin           String?   @db.VarChar(255)
+  plan               String    @db.VarChar(191)
+  sector             String?   @db.VarChar(191)
+  orgType            String?   @map("org_type") @db.VarChar(191)
+  primaryInterest    String?   @map("primary_interest") @db.VarChar(191)
+  orgDescription     String?   @map("org_description") @db.Text
+  connectionsSeeking String?   @map("connections_seeking") @db.Text
+  status             String    @default("pending") @db.VarChar(50)
+  adminNotes         String?   @map("admin_notes") @db.Text
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  @@index([status], map: "idx_gen_status")
+  @@index([email], map: "idx_gen_email")
+  @@index([createdAt], map: "idx_gen_created_at")
+  @@map("general_applications")
+}
+
+model ContactEnquiry {
+  id            String    @id @default(uuid())
+  name          String    @db.VarChar(191)
+  organization  String    @db.VarChar(191)
+  email         String    @db.VarChar(191)
+  country       String?   @db.VarChar(191)
+  interestType  String    @map("interest_type") @db.VarChar(191)
+  message       String    @db.Text
+  status        String    @default("new") @db.VarChar(50)
+  internalNotes String?   @map("internal_notes") @db.Text
+  assignedTo    String?   @map("assigned_to") @db.VarChar(191)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([status], map: "idx_enq_status")
+  @@index([email], map: "idx_enq_email")
+  @@index([createdAt], map: "idx_enq_created_at")
+  @@map("contact_enquiries")
+}
+
+model Member {
+  id                 String    @id @default(uuid())
+  orgName            String    @map("org_name") @db.VarChar(191)
+  logo               String?   @db.VarChar(255)
+  memberName         String    @map("member_name") @db.VarChar(191)
+  designation        String    @db.VarChar(191)
+  country            String    @db.VarChar(191)
+  city               String    @db.VarChar(191)
+  sector             String    @db.VarChar(191)
+  tier               String    @db.VarChar(191)
+  orgType            String    @map("org_type") @db.VarChar(191)
+  services           String?   @db.Text
+  interests          String?   @db.Text
+  description        String?   @db.Text
+  website            String?   @db.VarChar(255)
+  linkedin           String?   @db.VarChar(255)
+  showPublicContact  Boolean   @default(true) @map("show_public_contact")
+  isActive           Boolean   @default(true) @map("is_active")
+  verifiedAt         DateTime  @map("verified_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  @@index([isActive], map: "idx_mem_active")
+  @@index([tier], map: "idx_mem_tier")
+  @@map("members")
+}
+
+model AuditLog {
+  id         String    @id @default(uuid())
+  adminId    String?   @map("admin_id") @db.VarChar(191)
+  adminEmail String    @map("admin_email") @db.VarChar(191)
+  action     String    @db.VarChar(191)
+  entityType String    @map("entity_type") @db.VarChar(191)
+  entityId   String?   @map("entity_id") @db.VarChar(191)
+  details    String?   @db.Text
+  ipAddress  String?   @map("ip_address") @db.VarChar(100)
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([adminId], map: "idx_audit_admin")
+  @@index([action], map: "idx_audit_action")
+  @@index([entityType, entityId], map: "idx_audit_target")
+  @@index([createdAt], map: "idx_audit_created_at")
+  @@map("audit_logs")
+}
+
+model ApplicationReview {
+  id                      String                 @id @default(uuid())
+  applicationType         String                 @map("application_type") @db.VarChar(50)
+  businessApplicationId   String?                @map("business_application_id") @db.VarChar(191)
+  leadershipApplicationId String?                @map("leadership_application_id") @db.VarChar(191)
+  adminId                 String                 @map("admin_id") @db.VarChar(191)
+  adminEmail              String                 @map("admin_email") @db.VarChar(191)
+  previousStatus          String                 @map("previous_status") @db.VarChar(50)
+  newStatus               String                 @map("new_status") @db.VarChar(50)
+  reviewNote              String?                @map("review_note") @db.Text
+  createdAt               DateTime               @default(now()) @map("created_at")
+
+  admin                   Admin                  @relation(fields: [adminId], references: [id], onDelete: Cascade, map: "fk_rev_admin")
+  businessApplication     BusinessApplication?   @relation(fields: [businessApplicationId], references: [id], onDelete: Cascade, map: "fk_rev_biz")
+  leadershipApplication   LeadershipApplication? @relation(fields: [leadershipApplicationId], references: [id], onDelete: Cascade, map: "fk_rev_lead")
+
+  @@index([adminId], map: "idx_rev_admin")
+  @@index([businessApplicationId], map: "idx_rev_biz")
+  @@index([leadershipApplicationId], map: "idx_rev_lead")
+  @@index([createdAt], map: "idx_rev_created_at")
+  @@map("application_reviews")
+}
+
+model ApplicationNotification {
+  id              String    @id @default(uuid())
+  applicationType String    @map("application_type") @db.VarChar(50)
+  applicationId   String    @map("application_id") @db.VarChar(191)
+  recipientEmail  String    @map("recipient_email") @db.VarChar(191)
+  recipientName   String    @map("recipient_name") @db.VarChar(191)
+  decision        String    @db.VarChar(50)
+  status          String    @default("PENDING") @db.VarChar(50)
+  messageId       String?   @map("message_id") @db.VarChar(191)
+  errorMessage    String?   @map("error_message") @db.Text
+  sentAt          DateTime? @map("sent_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([applicationType, applicationId], map: "idx_notif_app")
+  @@index([applicationId, decision], map: "idx_notif_decision")
+  @@index([status], map: "idx_notif_status")
+  @@index([createdAt], map: "idx_notif_created_at")
+  @@map("application_notifications")
+}

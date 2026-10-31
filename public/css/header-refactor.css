@@ -1,0 +1,265 @@
+/* ==========================================================================
+   GTICC TWO-ROW HEADER REFACTOR
+   ========================================================================== */
+
+/* 1. Header Container Resets */
+header.header.header-sticky.gticc-two-row-header {
+  position: relative !important;
+  height: auto !important;
+  min-height: auto !important;
+  padding: 0 !important;
+  background-color: #0B1838 !important;
+  border-bottom: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.20) !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Sticky Header State */
+header.header.header-sticky.gticc-two-row-header.is-sticky {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background: rgba(11, 24, 56, 0.98) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 2px solid #B8960C !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ==========================================================================
+   UPPER HEADER (BRANDING SECTION)
+   ========================================================================== */
+.gticc-two-row-header .header-upper-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 120px !important;
+  background-color: #0B1838 !important;
+  border-bottom: 1px solid rgba(200, 162, 74, 0.15) !important;
+  padding: 0 28px !important;
+  transition: all 0.3s ease-in-out !important;
+  box-sizing: border-box !important;
+}
+
+/* Upper Row Sticky Adjustments */
+header.header.header-sticky.gticc-two-row-header.is-sticky .header-upper-row {
+  background-color: transparent !important;
+}
+
+/* Logo Alignment */
+.gticc-two-row-header .header-upper-row .navbar-brand {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
+  width: auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+  flex: none !important;
+  position: static !important;
+  transform: none !important;
+}
+
+/* Logo Sizing */
+.gticc-two-row-header .header-upper-row .navbar-logo {
+  height: 82px !important;
+  max-height: 82px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+/* ==========================================================================
+   LOWER HEADER (NAVIGATION SECTION)
+   ========================================================================== */
+.gticc-two-row-header .header-lower-row {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 60px !important;
+  background-color: #0B1838 !important;
+  padding: 0 28px !important;
+  transition: all 0.3s ease-in-out !important;
+  box-sizing: border-box !important;
+}
+
+/* Lower Row Sticky Adjustments */
+header.header.header-sticky.gticc-two-row-header.is-sticky .header-lower-row {
+  background-color: transparent !important;
+}
+
+/* Lower Navbar and Container Centering */
+.gticc-two-row-header .header-lower-row .container-fluid {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+.gticc-two-row-header .header-lower-row .navbar {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+
+/* ==========================================================================
+   DESKTOP & TABLET LAYOUTS (>= 768px)
+   ========================================================================== */
+@media (min-width: 768px) {
+  /* Enforce displays to show desktop navigation and hide mobile navigation */
+  .gticc-two-row-header .lower-desktop-nav-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .gticc-two-row-header .mobile-nav-wrapper {
+    display: none !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 24px !important; /* equal spacing between menu items */
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav > li {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav > li .nav-link {
+    font-size: 22px !important;
+    font-weight: 500 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Align inline actions (Search & Hamburger) on the far right */
+  .gticc-two-row-header .desktop-inline-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 20px !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+  }
+}
+
+/* ==========================================================================
+   BREAKPOINTS RESPONSIVE BEHAVIOR
+   ========================================================================== */
+
+/* 1. Tablet Screens (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .gticc-two-row-header .header-upper-row {
+    height: 100px !important;
+  }
+  
+  .gticc-two-row-header .header-upper-row .navbar-logo {
+    height: 68px !important;
+    max-height: 68px !important;
+  }
+  
+  .gticc-two-row-header .header-lower-row {
+    height: 55px !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav {
+    gap: 0 16px !important; /* tighter spacing for tablet */
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav > li .nav-link {
+    font-size: 19px !important; /* adjust slightly to prevent text collision */
+  }
+}
+
+/* 2. Mobile Screens (< 768px) */
+@media (max-width: 767px) {
+  /* Enforce displays to hide desktop navigation and show mobile navigation */
+  .gticc-two-row-header .lower-desktop-nav-wrapper {
+    display: none !important;
+  }
+
+  .gticc-two-row-header .mobile-nav-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .gticc-two-row-header .header-upper-row {
+    height: 90px !important;
+    padding: 0 16px !important;
+  }
+  
+  .gticc-two-row-header .header-upper-row .navbar-logo {
+    width: 240px !important;
+    max-width: 240px !important;
+    height: auto !important;
+    max-height: 62px !important;
+  }
+  
+  .gticc-two-row-header .header-lower-row {
+    height: 55px !important;
+    padding: 0 16px !important;
+  }
+
+  /* Center the mobile lower row items (search + hamburger) */
+  .gticc-two-row-header .mobile-action-group {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 30px !important;
+    width: auto !important;
+  }
+
+  .gticc-two-row-header .mobile-action-group .search {
+    margin: 0 !important;
+  }
+
+  .gticc-two-row-header .mobile-action-group .mobile-hamburger {
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  .gticc-two-row-header .mobile-action-group .hamburger {
+    padding: 8px !important;
+    border: none !important;
+    background: transparent !important;
+  }
+}

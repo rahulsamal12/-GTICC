@@ -1,0 +1,80 @@
+name: gticc-admin
+
+services:
+  mysql:
+    image: mysql:8.0.36
+    container_name: gticc_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-gticc_root_secure_pw_2026}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-gticc_db}
+      MYSQL_USER: ${MYSQL_USER:-gticc_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-e9c4ca1cea2631793453a5e62b8fc054586a1222a5a53e9cGticc2026!}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # SQL files in docker-entrypoint-initdb.d/ are only executed when the
+      # volume is EMPTY (first start). Existing data is preserved on restarts.
+      - ./docker-initdb:/docker-entrypoint-initdb.d:ro
+    ports:
+      # Bound strictly to loopback; host port 3307 avoids conflict with Windows MySQL on 3306
+      - "127.0.0.1:3307:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks:
+      - gticc_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gticc_admin_app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Must use "mysql" (service name) — NOT localhost — when running inside Docker
+      DATABASE_URL: mysql://${MYSQL_USER:-gticc_app}:${MYSQL_PASSWORD:-e9c4ca1cea2631793453a5e62b8fc054586a1222a5a53e9cGticc2026!}@mysql:3306/${MYSQL_DATABASE:-gticc_db}
+      JWT_SECRET: ${JWT_SECRET:-gticc_production_jwt_signing_secret_key_change_in_production_2026}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:5173}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:5173}
+      # Brevo Transactional Email Service Configuration
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      BREVO_SENDER_EMAIL: ${BREVO_SENDER_EMAIL:-}
+      BREVO_SENDER_NAME: ${BREVO_SENDER_NAME:-GTICC}
+    ports:
+      - "3000:3000"
+    networks:
+      - gticc_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: gticc_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: "0"
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - gticc_network
+
+volumes:
+  mysql_data:
+    name: gticc_mysql_data
+
+networks:
+  gticc_network:
+    name: gticc_network
+    driver: bridge

@@ -1,0 +1,480 @@
+/* ==========================================================================
+   GTICC TWO-ROW HEADER REFACTOR - REFINED FRONTEND DESIGN (LARGE LOGO)
+   ========================================================================== */
+
+/* 1. Header Container Resets */
+header.header.header-sticky.gticc-two-row-header {
+  position: relative !important;
+  height: auto !important;
+  min-height: auto !important;
+  padding: 0 !important;
+  background-color: #0B1838 !important;
+  border-bottom: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.20) !important;
+  width: 100% !important;
+  display: block !important;
+  transition: box-shadow 0.4s ease, border-bottom 0.4s ease !important;
+}
+
+/* Sticky Header State */
+header.header.header-sticky.gticc-two-row-header.is-sticky {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background: #0B1838 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 2px solid #C8A24A !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.30) !important;
+}
+
+/* Smoothly collapse upper logo row when sticky — no display:none flicker */
+header.header.header-sticky.gticc-two-row-header.is-sticky .header-upper-row {
+  max-height: 0 !important;
+  min-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  border-bottom: none !important;
+}
+
+/* ==========================================================================
+   UPPER HEADER (BRANDING SECTION)
+   ========================================================================== */
+.gticc-two-row-header .header-upper-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 110px !important;
+  max-height: 220px !important; /* cap for smooth collapse */
+  background-color: #0B1838 !important;
+  border-bottom: 1px solid rgba(200, 162, 74, 0.15) !important;
+  padding: 15px 28px !important;
+  /* Smooth collapse: animate height, opacity, and padding together */
+  transition:
+    max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    min-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    padding-top 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    padding-bottom 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.35s ease,
+    border-bottom 0.35s ease !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+}
+
+/* Upper Row Sticky Adjustments — background handled by is-sticky block above */
+
+/* Logo Link/Container Override for Desktop and Laptop */
+.gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo {
+  display: block !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  height: auto !important;
+  width: 70% !important;
+  min-width: 0 !important;
+  max-width: 1400px !important;
+  flex: none !important;
+  position: static !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+/* Logo Image Sizing for Desktop (>= 1200px) */
+.gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo img.navbar-logo {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+  transition: all 0.3s ease-in-out !important;
+  transform: none !important;
+}
+
+/* Tablet and Mobile Actions (hidden by default on desktop/laptop) */
+.gticc-two-row-header .tablet-mobile-actions {
+  display: none !important;
+}
+
+/* ==========================================================================
+   LOWER HEADER (NAVIGATION SECTION)
+   ========================================================================== */
+.gticc-two-row-header .header-lower-row {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  background-color: #0B1838 !important;
+  padding: 0 28px !important;
+  transition: all 0.3s ease-in-out !important;
+  box-sizing: border-box !important;
+}
+
+/* Lower Row Sticky Adjustments */
+header.header.header-sticky.gticc-two-row-header.is-sticky .header-lower-row {
+  background-color: transparent !important;
+  height: 48px !important;
+  min-height: 48px !important;
+}
+
+/* Lower Navbar and Container Centering */
+.gticc-two-row-header .header-lower-row .container-fluid {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+.gticc-two-row-header .header-lower-row .navbar {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+
+/* ==========================================================================
+   DESKTOP & TABLET LAYOUTS (>= 768px)
+   ========================================================================== */
+@media (min-width: 768px) {
+  /* Viewport Display Toggles */
+  .gticc-two-row-header .lower-desktop-nav-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .gticc-two-row-header .mobile-nav-wrapper {
+    display: none !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 22px !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav > li {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav > li .nav-link {
+    font-size: 21px !important;
+    font-weight: 500 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Align inline actions (Search & Hamburger) on the far right */
+  .gticc-two-row-header .desktop-inline-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 20px !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+  }
+}
+
+/* ==========================================================================
+   BREAKPOINTS RESPONSIVE BEHAVIOR
+   ========================================================================== */
+
+/* 1. Laptop Breakpoint (1024px - 1199px) */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .gticc-two-row-header .header-upper-row {
+    height: auto !important;
+    min-height: 100px !important;
+    padding: 12px 28px !important;
+  }
+
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo {
+    width: 70% !important;
+    max-width: 1400px !important;
+    min-width: 0 !important;
+    height: auto !important;
+  }
+
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo img.navbar-logo {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    object-fit: contain !important;
+  }
+
+  .gticc-two-row-header .header-lower-row {
+    height: 48px !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav {
+    gap: 0 14px !important;
+  }
+
+  .gticc-two-row-header .navbar-collapse-wrapper .navbar-nav > li .nav-link {
+    font-size: 18px !important;
+  }
+}
+
+/* 2. Tablet Breakpoint (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .gticc-two-row-header .header-upper-row {
+    height: auto !important;
+    min-height: 110px !important;
+    padding: 10px 28px !important;
+    position: relative !important;
+  }
+  
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo {
+    width: auto !important;
+    max-width: 50% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important; /* Keep logo centered */
+  }
+
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo img.navbar-logo {
+    height: 90px !important; /* Target: 80px–100px */
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
+
+  /* Place Search and Hamburger on the right side of the centered logo */
+  .gticc-two-row-header .tablet-mobile-actions {
+    display: flex !important;
+    position: absolute !important;
+    right: 24px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    align-items: center !important;
+    gap: 16px !important; /* proper spacing gap */
+    z-index: 10 !important;
+  }
+  
+  /* Hide the lower row entirely on tablet */
+  .gticc-two-row-header .header-lower-row {
+    display: none !important;
+  }
+
+  /* Hide lower row search/hamburger on tablet since they are in the upper row */
+  .gticc-two-row-header .desktop-inline-actions {
+    display: none !important;
+  }
+}
+
+/* 3. Mobile Breakpoint (< 768px) */
+@media (max-width: 767px) {
+  /* Hide desktop and mobile navigation wrappers in the lower row since lower row is hidden on mobile */
+  .gticc-two-row-header .lower-desktop-nav-wrapper,
+  .gticc-two-row-header .mobile-nav-wrapper {
+    display: none !important;
+  }
+
+  .gticc-two-row-header .header-upper-row {
+    height: auto !important;
+    min-height: 86px !important;
+    padding: 8px 16px !important;
+    position: relative !important;
+  }
+  
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo {
+    width: auto !important;
+    max-width: 45% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important; /* Keep logo centered */
+  }
+
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo img.navbar-logo {
+    height: 70px !important; /* Suggested: 60px–75px */
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important; /* Keep aspect ratio to prevent squeeze */
+    display: block !important;
+  }
+
+  /* Place Search and Hamburger on the right side of the centered logo */
+  .gticc-two-row-header .tablet-mobile-actions {
+    display: flex !important;
+    position: absolute !important;
+    right: 16px !important; /* Minimum 16px padding from screen edge */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    align-items: center !important;
+    gap: 18px !important; /* spacing: 16px–24px gap */
+    z-index: 10 !important;
+  }
+
+  /* Keep Search and Hamburger aligned vertically with standard button paddings reset */
+  .gticc-two-row-header .tablet-mobile-actions .mobile-hamburger button {
+    padding: 8px !important;
+    border: none !important;
+    background: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  /* Hide the lower row entirely on mobile */
+  .gticc-two-row-header .header-lower-row {
+    display: none !important;
+  }
+}
+
+/* 4. Small Mobile Breakpoint (< 480px) */
+@media (max-width: 480px) {
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo {
+    max-width: 42% !important;
+  }
+
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo img.navbar-logo {
+    height: 64px !important; /* Within 60px-75px range */
+  }
+}
+
+/* 5. Extra Small Mobile Breakpoint (< 360px) */
+@media (max-width: 360px) {
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo {
+    max-width: 35% !important;
+  }
+
+  .gticc-two-row-header .header-upper-row .navbar-brand.logo-container.upper-navbar-logo.responsive-logo img.navbar-logo {
+    height: 60px !important; /* Within 60px-75px range */
+  }
+}
+
+/* ==========================================================================
+   NESTED DROPDOWN SUBMENU FOR MEMBERSHIP ONBOARDING
+   ========================================================================== */
+/* Desktop Submenu (hover/positioning) */
+.header .navbar .dropdown-menu .dropdown-submenu {
+  position: relative !important;
+}
+
+.header .navbar .dropdown-menu .dropdown-submenu > .dropdown-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  position: relative !important;
+}
+
+.header .navbar .dropdown-menu .dropdown-submenu > .dropdown-item i.submenu-caret {
+  margin-left: 12px !important;
+  font-size: 14px !important;
+  transition: transform 0.25s ease !important;
+  color: inherit !important;
+}
+
+/* Submenu dropdown panel */
+.header .navbar .dropdown-menu .dropdown-submenu > .submenu-dropdown {
+  position: absolute !important;
+  top: 0 !important;
+  left: 100% !important;
+  margin-top: -6px !important;
+  margin-left: 2px !important;
+  display: none !important;
+  list-style: none !important;
+  padding: 10px 0 !important;
+  background-color: #0D1117 !important;
+  border: 1px solid rgba(200, 162, 74, 0.3) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+  min-width: 300px !important;
+  z-index: 1050 !important;
+}
+
+.header .navbar .dropdown-menu .dropdown-submenu:hover > .submenu-dropdown {
+  display: block !important;
+  animation: fadeInSubmenu 0.2s ease-in-out !important;
+}
+
+.header .navbar .dropdown-menu .dropdown-submenu:hover > .dropdown-item i.submenu-caret {
+  transform: translateX(3px) !important;
+  color: #C8A24A !important;
+}
+
+@keyframes fadeInSubmenu {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Offcanvas Submenu */
+.main-menu-offcanvas .mobile-submenu-toggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+.main-menu-offcanvas .mobile-submenu-list {
+  list-style: none !important;
+  padding-left: 18px !important;
+  margin: 6px 0 10px 0 !important;
+  border-left: 2px solid rgba(200, 162, 74, 0.25) !important;
+}
+
+.main-menu-offcanvas .mobile-submenu-list li a {
+  padding: 8px 12px !important;
+  font-size: 18px !important;
+  display: block !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease !important;
+}
+
+.main-menu-offcanvas .mobile-submenu-list li a:hover,
+.main-menu-offcanvas .mobile-submenu-list li a.active {
+  color: #C8A24A !important;
+}
+
+
