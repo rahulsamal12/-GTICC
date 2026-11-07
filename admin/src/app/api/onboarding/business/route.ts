@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error:
-            'A business onboarding application for this organization and corporate email was already submitted within the last 5 minutes. To prevent duplicate submissions, please allow 5 minutes between submissions or contact membership@gticc.com for revisions.',
+            'A business onboarding application for this organization and corporate email was already submitted within the last 5 minutes. To prevent duplicate submissions, please allow 5 minutes between submissions or contact gticcofficial@gmail.com for revisions.',
         },
         { status: 409, headers: corsHeaders(req) }
       );

@@ -54,6 +54,70 @@ export default function LeadershipPositionOnboarding() {
   const [submissionReference, setSubmissionReference] = useState('');
   const [errors, setErrors] = useState({});
 
+  // Profile & Supporting Documents state (optional)
+  const [documents, setDocuments] = useState({
+    profilePhoto: null,
+    professionalCert: null,
+  });
+  const [docErrors, setDocErrors] = useState({
+    profilePhoto: '',
+    professionalCert: '',
+  });
+
+  const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+  const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png'];
+  const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+  const formatFileSize = (bytes) => {
+    if (!bytes && bytes !== 0) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  const handleFileUpload = (docKey, file) => {
+    if (!file) return;
+
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    const isExtensionValid = ALLOWED_EXTENSIONS.includes(ext);
+    const isMimeValid = ALLOWED_MIME_TYPES.includes(file.type) || file.type === '';
+
+    if (!isExtensionValid && !isMimeValid) {
+      setDocErrors((prev) => ({
+        ...prev,
+        [docKey]: 'Invalid file format. Only PDF, JPG, JPEG, and PNG files are accepted.',
+      }));
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setDocErrors((prev) => ({
+        ...prev,
+        [docKey]: `File exceeds maximum allowed size of 5 MB (selected: ${formatFileSize(file.size)}).`,
+      }));
+      return;
+    }
+
+    setDocErrors((prev) => ({ ...prev, [docKey]: '' }));
+    setDocuments((prev) => ({
+      ...prev,
+      [docKey]: {
+        file,
+        name: file.name,
+        size: file.size,
+        formattedSize: formatFileSize(file.size),
+        type: file.type,
+      },
+    }));
+  };
+
+  const handleFileRemove = (docKey) => {
+    setDocuments((prev) => ({ ...prev, [docKey]: null }));
+    setDocErrors((prev) => ({ ...prev, [docKey]: '' }));
+    const inputEl = document.getElementById(`lpo-${docKey}-input`);
+    if (inputEl) inputEl.value = '';
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === 'checkbox') {
@@ -623,6 +687,82 @@ export default function LeadershipPositionOnboarding() {
       color: #FFFFFF !important;
       text-decoration-color: #F2C45D !important;
     }
+
+    /* Document upload styling */
+    .onboarding-upload-dropzone {
+      border: 1.5px dashed #2A3649;
+      background: #182230;
+      border-radius: 8px;
+      padding: 20px 18px;
+      text-align: center;
+      transition: border-color 0.2s ease, background 0.2s ease;
+      position: relative;
+    }
+    .onboarding-upload-dropzone:hover {
+      border-color: #D6A43B;
+      background: #1C2737;
+    }
+    .onboarding-upload-dropzone.has-file {
+      border-color: #3B82F6;
+      background: rgba(59, 130, 246, 0.05);
+    }
+    .onboarding-file-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #202936;
+      border: 1px solid #2A3649;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-top: 10px;
+    }
+    .onboarding-file-name {
+      color: #F5F5F5;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+    .onboarding-file-size {
+      color: #AAB4C3;
+      font-size: 11.5px;
+      margin-left: 6px;
+    }
+    .onboarding-file-remove-btn {
+      background: transparent;
+      border: 1px solid #ef4444;
+      color: #ef4444;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .onboarding-file-remove-btn:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+    .onboarding-file-replace-btn {
+      background: transparent;
+      border: 1px solid #D6A43B;
+      color: #D6A43B;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .onboarding-file-replace-btn:hover {
+      background: #D6A43B;
+      color: #081321;
+    }
   `;
 
   return (
@@ -678,8 +818,8 @@ export default function LeadershipPositionOnboarding() {
                   <div className="lpo-notice-box" style={{ maxWidth: '650px', margin: '20px auto', textAlign: 'left' }}>
                     <p style={{ margin: 0 }}>
                       <strong>Executive Review Status:</strong> Your nomination is queued for confidential screening by the GTICC Executive Governance Committee. For communications regarding this submission, please contact the Secretariat at{' '}
-                      <a href="mailto:membership@gticc.com" className="gticc-email-link">
-                        membership@gticc.com
+                      <a href="mailto:gticcofficial@gmail.com" className="gticc-email-link">
+                        gticcofficial@gmail.com
                       </a> quoting your reference ID.
                     </p>
                   </div>
@@ -751,8 +891,8 @@ export default function LeadershipPositionOnboarding() {
                     </p>
                     <p style={{ color: '#AAB4C3', fontSize: '13px', fontStyle: 'italic', margin: 0, lineHeight: 1.55 }}>
                       &ldquo;Please complete the following 8 questions. This document may be filled out electronically or via hard copy and submitted directly to the GTICC Secretariat at{' '}
-                      <a href="mailto:membership@gticc.com" className="gticc-email-link">
-                        membership@gticc.com
+                      <a href="mailto:gticcofficial@gmail.com" className="gticc-email-link">
+                        gticcofficial@gmail.com
                       </a>.&rdquo;
                     </p>
                   </div>
@@ -1096,6 +1236,131 @@ export default function LeadershipPositionOnboarding() {
                         required
                       />
                       {errors.executiveSummary && <p className="onboarding-error">{errors.executiveSummary}</p>}
+                    </div>
+                  </div>
+
+                  {/* Profile & Supporting Documents */}
+                  <div className="lpo-section-title" style={{ marginTop: '40px' }}>
+                    Profile &amp; Supporting Documents
+                  </div>
+                  <p className="lpo-q-desc" style={{ marginBottom: '14px' }}>
+                    Upload supporting documentation for your leadership profile. Both uploads are strictly optional and assist the GTICC Governance Secretariat in expediting vetting and committee assignment.
+                  </p>
+                  <div className="row g-3">
+                    {/* Profile Photograph */}
+                    <div className="col-md-6">
+                      <label className="field-sublabel">
+                        Profile Photograph <span style={{ color: '#AAB4C3', fontWeight: 'normal', fontSize: '12px' }}>(Optional)</span>
+                      </label>
+                      <input
+                        type="file"
+                        id="lpo-profilePhoto-input"
+                        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                        style={{ display: 'none' }}
+                        onChange={(e) => handleFileUpload('profilePhoto', e.target.files?.[0])}
+                      />
+                      {!documents.profilePhoto ? (
+                        <div
+                          className="onboarding-upload-dropzone"
+                          onClick={() => document.getElementById('lpo-profilePhoto-input')?.click()}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '26px', color: '#D6A43B', marginBottom: '8px', display: 'block' }}></i>
+                          <div style={{ color: '#F5F5F5', fontSize: '13px', fontWeight: '600' }}>
+                            Upload profile photo (if available)
+                          </div>
+                          <div style={{ color: '#AAB4C3', fontSize: '11.5px', marginTop: '4px' }}>
+                            PDF, JPG, JPEG, or PNG &bull; Max 5 MB
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="onboarding-file-card">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                            <i className="fa-solid fa-file-image" style={{ color: '#D6A43B', fontSize: '18px', flexShrink: 0 }}></i>
+                            <div style={{ minWidth: 0 }}>
+                              <div className="onboarding-file-name" title={documents.profilePhoto.name}>
+                                {documents.profilePhoto.name}
+                              </div>
+                              <span className="onboarding-file-size">({documents.profilePhoto.formattedSize})</span>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            <button
+                              type="button"
+                              className="onboarding-file-replace-btn"
+                              onClick={() => document.getElementById('lpo-profilePhoto-input')?.click()}
+                            >
+                              Replace
+                            </button>
+                            <button
+                              type="button"
+                              className="onboarding-file-remove-btn"
+                              onClick={() => handleFileRemove('profilePhoto')}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      {docErrors.profilePhoto && <p className="onboarding-error">{docErrors.profilePhoto}</p>}
+                    </div>
+
+                    {/* Professional Licence / Certification */}
+                    <div className="col-md-6">
+                      <label className="field-sublabel">
+                        Professional Licence / Certification <span style={{ color: '#AAB4C3', fontWeight: 'normal', fontSize: '12px' }}>(Optional)</span>
+                      </label>
+                      <input
+                        type="file"
+                        id="lpo-professionalCert-input"
+                        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                        style={{ display: 'none' }}
+                        onChange={(e) => handleFileUpload('professionalCert', e.target.files?.[0])}
+                      />
+                      {!documents.professionalCert ? (
+                        <div
+                          className="onboarding-upload-dropzone"
+                          onClick={() => document.getElementById('lpo-professionalCert-input')?.click()}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '26px', color: '#D6A43B', marginBottom: '8px', display: 'block' }}></i>
+                          <div style={{ color: '#F5F5F5', fontSize: '13px', fontWeight: '600' }}>
+                            Upload relevant professional licences or certificates (if available)
+                          </div>
+                          <div style={{ color: '#AAB4C3', fontSize: '11.5px', marginTop: '4px' }}>
+                            PDF, JPG, JPEG, or PNG &bull; Max 5 MB
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="onboarding-file-card">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                            <i className="fa-solid fa-file-lines" style={{ color: '#D6A43B', fontSize: '18px', flexShrink: 0 }}></i>
+                            <div style={{ minWidth: 0 }}>
+                              <div className="onboarding-file-name" title={documents.professionalCert.name}>
+                                {documents.professionalCert.name}
+                              </div>
+                              <span className="onboarding-file-size">({documents.professionalCert.formattedSize})</span>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            <button
+                              type="button"
+                              className="onboarding-file-replace-btn"
+                              onClick={() => document.getElementById('lpo-professionalCert-input')?.click()}
+                            >
+                              Replace
+                            </button>
+                            <button
+                              type="button"
+                              className="onboarding-file-remove-btn"
+                              onClick={() => handleFileRemove('professionalCert')}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      {docErrors.professionalCert && <p className="onboarding-error">{docErrors.professionalCert}</p>}
                     </div>
                   </div>
 
