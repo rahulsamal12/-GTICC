@@ -46,6 +46,10 @@ model BusinessApplication {
   authSubmissionDate    String              @map("auth_submission_date") @db.VarChar(191)
   authSignatureSeal     String              @map("auth_signature_seal") @db.VarChar(191)
   affirmation           Boolean             @default(true)
+  profilePhotoUrl       String?             @map("profile_photo_url") @db.VarChar(500)
+  profilePhotoName      String?             @map("profile_photo_name") @db.VarChar(255)
+  professionalCertUrl   String?             @map("professional_cert_url") @db.VarChar(500)
+  professionalCertName  String?             @map("professional_cert_name") @db.VarChar(255)
   status                String              @default("PENDING") @db.VarChar(50)
   adminNotes            String?             @map("admin_notes") @db.Text
   reviewedBy            String?             @map("reviewed_by") @db.VarChar(191)
@@ -82,6 +86,10 @@ model LeadershipApplication {
   digitalSignature         String              @map("digital_signature") @db.VarChar(191)
   attestationOfficialEmail String              @map("attestation_official_email") @db.VarChar(191)
   attestationCheck         Boolean             @default(true) @map("attestation_check")
+  profilePhotoUrl          String?             @map("profile_photo_url") @db.VarChar(500)
+  profilePhotoName         String?             @map("profile_photo_name") @db.VarChar(255)
+  professionalCertUrl      String?             @map("professional_cert_url") @db.VarChar(500)
+  professionalCertName     String?             @map("professional_cert_name") @db.VarChar(255)
   status                   String              @default("pending") @db.VarChar(50)
   adminNotes               String?             @map("admin_notes") @db.Text
   reviewedBy               String?             @map("reviewed_by") @db.VarChar(191)

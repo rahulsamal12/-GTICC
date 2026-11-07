@@ -275,10 +275,55 @@ export default function BusinessMembershipOnboarding() {
     if (errorKeys.length === 0) {
       setIsSubmitting(true);
       try {
+        let profilePhotoUrl = null;
+        let profilePhotoName = null;
+        let professionalCertUrl = null;
+        let professionalCertName = null;
+
+        // Upload Profile Photograph if attached
+        if (documents.profilePhoto?.file) {
+          const photoData = new FormData();
+          photoData.append('file', documents.profilePhoto.file);
+          photoData.append('docType', 'profile_photo');
+          const photoRes = await fetch(getApiUrl('/upload'), {
+            method: 'POST',
+            body: photoData,
+          });
+          const photoJson = await photoRes.json();
+          if (photoRes.ok && photoJson.fileUrl) {
+            profilePhotoUrl = photoJson.fileUrl;
+            profilePhotoName = photoJson.fileName || documents.profilePhoto.name;
+          }
+        }
+
+        // Upload Professional Licence / Certification if attached
+        if (documents.professionalCert?.file) {
+          const certData = new FormData();
+          certData.append('file', documents.professionalCert.file);
+          certData.append('docType', 'professional_cert');
+          const certRes = await fetch(getApiUrl('/upload'), {
+            method: 'POST',
+            body: certData,
+          });
+          const certJson = await certRes.json();
+          if (certRes.ok && certJson.fileUrl) {
+            professionalCertUrl = certJson.fileUrl;
+            professionalCertName = certJson.fileName || documents.professionalCert.name;
+          }
+        }
+
+        const submissionPayload = {
+          ...formData,
+          profilePhotoUrl,
+          profilePhotoName,
+          professionalCertUrl,
+          professionalCertName,
+        };
+
         const response = await fetch(getApiUrl('/onboarding/business'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(submissionPayload),
         });
 
         const result = await response.json();

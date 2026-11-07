@@ -156,8 +156,10 @@ export async function POST(req: NextRequest) {
         city_country, time_zone_gmt, current_designation, organization_firm, website,
         primary_industry_domain, other_industry_domain, strategic_engagement, geographic_markets,
         linkedin_url, executive_summary, candidate_name, attestation_date, digital_signature,
-        attestation_official_email, attestation_check, status, created_at, updated_at
-      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))`,
+        attestation_official_email, attestation_check,
+        profile_photo_url, profile_photo_name, professional_cert_url, professional_cert_name,
+        status, created_at, updated_at
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))`,
       [
         id,
         data.fullName.trim(),
@@ -180,6 +182,10 @@ export async function POST(req: NextRequest) {
         data.digitalSignature.trim(),
         data.attestationOfficialEmail.toLowerCase().trim(),
         data.attestationCheck ? 1 : 0,
+        data.profilePhotoUrl?.trim() || null,
+        data.profilePhotoName?.trim() || null,
+        data.professionalCertUrl?.trim() || null,
+        data.professionalCertName?.trim() || null,
         'PENDING',
       ]
     );

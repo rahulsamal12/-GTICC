@@ -28,6 +28,10 @@ export const businessApplicationSchema = z.object({
   authSubmissionDate: z.string().min(2, 'Submission date is required'),
   authSignatureSeal: z.string().min(2, 'Signature or seal identifier is required'),
   affirmation: z.boolean().refine(val => val === true, 'Affirmation of accuracy is strictly required'),
+  profilePhotoUrl: z.string().optional().nullable(),
+  profilePhotoName: z.string().optional().nullable(),
+  professionalCertUrl: z.string().optional().nullable(),
+  professionalCertName: z.string().optional().nullable(),
 });
 
 export const leadershipApplicationSchema = z.object({
@@ -51,6 +55,10 @@ export const leadershipApplicationSchema = z.object({
   digitalSignature: z.string().min(2, 'Digital signature is required'),
   attestationOfficialEmail: z.string().email('Valid attestation official email is required'),
   attestationCheck: z.boolean().refine(val => val === true, 'Attestation acknowledgment is strictly required'),
+  profilePhotoUrl: z.string().optional().nullable(),
+  profilePhotoName: z.string().optional().nullable(),
+  professionalCertUrl: z.string().optional().nullable(),
+  professionalCertName: z.string().optional().nullable(),
 });
 
 export const reviewStatusSchema = z.object({

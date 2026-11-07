@@ -25,6 +25,9 @@ import {
   RotateCcw,
   Send,
   RefreshCw,
+  Download,
+  FileCheck,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 type TabType = 'business' | 'leadership';
@@ -749,6 +752,107 @@ export default function ResponsesPage() {
                             </div>
                           </div>
                         </div>
+
+                        {/* Section 5: Profile & Supporting Documents */}
+                        <div>
+                          <h4 className="text-xs uppercase font-bold tracking-wider text-[#c8a24a] mb-3 border-b border-slate-800 pb-1.5 flex items-center gap-2">
+                            <span>4. PROFILE &amp; SUPPORTING DOCUMENTS</span>
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Profile Photograph */}
+                            <div className="p-3.5 bg-[#0a1b38] rounded-lg border border-slate-800 flex flex-col justify-between">
+                              <div>
+                                <span className="text-slate-400 block text-[11px] mb-2 font-semibold flex items-center gap-1.5">
+                                  <ImageIcon size={14} className="text-[#c8a24a]" />
+                                  <span>Profile Photograph</span>
+                                </span>
+                                {detailData.application.profilePhotoUrl ? (
+                                  <div className="space-y-3">
+                                    {/* Preview if image */}
+                                    {/\.(jpg|jpeg|png|webp)$/i.test(detailData.application.profilePhotoUrl) && (
+                                      <div className="w-24 h-24 rounded-lg overflow-hidden border border-slate-700 bg-[#081630]">
+                                        <img
+                                          src={detailData.application.profilePhotoUrl}
+                                          alt="Profile Photo Preview"
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                    )}
+                                    <div className="text-white font-medium break-all text-xs">
+                                      {detailData.application.profilePhotoName || 'profile_photograph'}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="text-slate-500 italic py-2 text-xs">Not provided</div>
+                                )}
+                              </div>
+                              {detailData.application.profilePhotoUrl && (
+                                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800/80">
+                                  <a
+                                    href={detailData.application.profilePhotoUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#0c2248] hover:bg-[#133267] text-[#c8a24a] border border-[#c8a24a]/30 text-[11px] font-medium transition"
+                                  >
+                                    <Eye size={12} />
+                                    <span>View</span>
+                                  </a>
+                                  <a
+                                    href={detailData.application.profilePhotoUrl}
+                                    download={detailData.application.profilePhotoName || 'profile_photo'}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-medium transition"
+                                  >
+                                    <Download size={12} />
+                                    <span>Download</span>
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Professional Licence / Certification */}
+                            <div className="p-3.5 bg-[#0a1b38] rounded-lg border border-slate-800 flex flex-col justify-between">
+                              <div>
+                                <span className="text-slate-400 block text-[11px] mb-2 font-semibold flex items-center gap-1.5">
+                                  <FileCheck size={14} className="text-[#c8a24a]" />
+                                  <span>Professional Licence / Certification</span>
+                                </span>
+                                {detailData.application.professionalCertUrl ? (
+                                  <div className="space-y-3">
+                                    <div className="text-white font-medium break-all text-xs">
+                                      {detailData.application.professionalCertName || 'professional_licence_certificate'}
+                                    </div>
+                                    <div className="text-[11px] text-slate-400">
+                                      Document uploaded &amp; verified for executive credential assessment
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="text-slate-500 italic py-2 text-xs">Not provided</div>
+                                )}
+                              </div>
+                              {detailData.application.professionalCertUrl && (
+                                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800/80">
+                                  <a
+                                    href={detailData.application.professionalCertUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#0c2248] hover:bg-[#133267] text-[#c8a24a] border border-[#c8a24a]/30 text-[11px] font-medium transition"
+                                  >
+                                    <Eye size={12} />
+                                    <span>View</span>
+                                  </a>
+                                  <a
+                                    href={detailData.application.professionalCertUrl}
+                                    download={detailData.application.professionalCertName || 'certification'}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-medium transition"
+                                  >
+                                    <Download size={12} />
+                                    <span>Download</span>
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       /* Leadership Position Fields */
@@ -919,6 +1023,107 @@ export default function ResponsesPage() {
                               <span className="font-mono text-[#c8a24a]">
                                 {detailData.application.digitalSignature}
                               </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Section 4: Profile & Supporting Documents */}
+                        <div>
+                          <h4 className="text-xs uppercase font-bold tracking-wider text-[#c8a24a] mb-3 border-b border-slate-800 pb-1.5 flex items-center gap-2">
+                            <span>4. PROFILE &amp; SUPPORTING DOCUMENTS</span>
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Profile Photograph */}
+                            <div className="p-3.5 bg-[#0a1b38] rounded-lg border border-slate-800 flex flex-col justify-between">
+                              <div>
+                                <span className="text-slate-400 block text-[11px] mb-2 font-semibold flex items-center gap-1.5">
+                                  <ImageIcon size={14} className="text-[#c8a24a]" />
+                                  <span>Profile Photograph</span>
+                                </span>
+                                {detailData.application.profilePhotoUrl ? (
+                                  <div className="space-y-3">
+                                    {/* Preview if image */}
+                                    {/\.(jpg|jpeg|png|webp)$/i.test(detailData.application.profilePhotoUrl) && (
+                                      <div className="w-24 h-24 rounded-lg overflow-hidden border border-slate-700 bg-[#081630]">
+                                        <img
+                                          src={detailData.application.profilePhotoUrl}
+                                          alt="Profile Photo Preview"
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                    )}
+                                    <div className="text-white font-medium break-all text-xs">
+                                      {detailData.application.profilePhotoName || 'profile_photograph'}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="text-slate-500 italic py-2 text-xs">Not provided</div>
+                                )}
+                              </div>
+                              {detailData.application.profilePhotoUrl && (
+                                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800/80">
+                                  <a
+                                    href={detailData.application.profilePhotoUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#0c2248] hover:bg-[#133267] text-[#c8a24a] border border-[#c8a24a]/30 text-[11px] font-medium transition"
+                                  >
+                                    <Eye size={12} />
+                                    <span>View</span>
+                                  </a>
+                                  <a
+                                    href={detailData.application.profilePhotoUrl}
+                                    download={detailData.application.profilePhotoName || 'profile_photo'}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-medium transition"
+                                  >
+                                    <Download size={12} />
+                                    <span>Download</span>
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Professional Licence / Certification */}
+                            <div className="p-3.5 bg-[#0a1b38] rounded-lg border border-slate-800 flex flex-col justify-between">
+                              <div>
+                                <span className="text-slate-400 block text-[11px] mb-2 font-semibold flex items-center gap-1.5">
+                                  <FileCheck size={14} className="text-[#c8a24a]" />
+                                  <span>Professional Licence / Certification</span>
+                                </span>
+                                {detailData.application.professionalCertUrl ? (
+                                  <div className="space-y-3">
+                                    <div className="text-white font-medium break-all text-xs">
+                                      {detailData.application.professionalCertName || 'professional_licence_certificate'}
+                                    </div>
+                                    <div className="text-[11px] text-slate-400">
+                                      Document uploaded &amp; verified for executive credential assessment
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="text-slate-500 italic py-2 text-xs">Not provided</div>
+                                )}
+                              </div>
+                              {detailData.application.professionalCertUrl && (
+                                <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800/80">
+                                  <a
+                                    href={detailData.application.professionalCertUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#0c2248] hover:bg-[#133267] text-[#c8a24a] border border-[#c8a24a]/30 text-[11px] font-medium transition"
+                                  >
+                                    <Eye size={12} />
+                                    <span>View</span>
+                                  </a>
+                                  <a
+                                    href={detailData.application.professionalCertUrl}
+                                    download={detailData.application.professionalCertName || 'certification'}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-medium transition"
+                                  >
+                                    <Download size={12} />
+                                    <span>Download</span>
+                                  </a>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

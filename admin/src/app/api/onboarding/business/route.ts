@@ -160,9 +160,10 @@ export async function POST(req: NextRequest) {
         corporate_email, country_code, direct_phone, hq_city_country, additional_locations,
         primary_industry_sector, other_industry_sector, primary_business_model, annual_turnover,
         exim_status, target_markets, trade_objectives, auth_officer_name, auth_corporate_title,
-        auth_corporate_email, auth_submission_date, auth_signature_seal, affirmation, status,
-        created_at, updated_at
-      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))`,
+        auth_corporate_email, auth_submission_date, auth_signature_seal, affirmation,
+        profile_photo_url, profile_photo_name, professional_cert_url, professional_cert_name,
+        status, created_at, updated_at
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))`,
       [
         id,
         data.legalEntityName.trim(),
@@ -187,6 +188,10 @@ export async function POST(req: NextRequest) {
         data.authSubmissionDate.trim(),
         data.authSignatureSeal.trim(),
         data.affirmation ? 1 : 0,
+        data.profilePhotoUrl?.trim() || null,
+        data.profilePhotoName?.trim() || null,
+        data.professionalCertUrl?.trim() || null,
+        data.professionalCertName?.trim() || null,
         'PENDING',
       ]
     );
