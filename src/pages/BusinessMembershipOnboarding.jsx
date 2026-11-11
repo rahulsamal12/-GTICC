@@ -52,6 +52,8 @@ export default function BusinessMembershipOnboarding() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
   const [submissionReference, setSubmissionReference] = useState('');
+  const [isModifyMode, setIsModifyMode] = useState(false);
+  const [updateSuccessMessage, setUpdateSuccessMessage] = useState('');
   const [errors, setErrors] = useState({});
 
   // Profile & Supporting Documents state (optional)
@@ -269,18 +271,19 @@ export default function BusinessMembershipOnboarding() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError('');
+    setUpdateSuccessMessage('');
     const validationErrors = validate();
     const errorKeys = Object.keys(validationErrors);
 
     if (errorKeys.length === 0) {
       setIsSubmitting(true);
       try {
-        let profilePhotoUrl = null;
-        let profilePhotoName = null;
-        let professionalCertUrl = null;
-        let professionalCertName = null;
+        let profilePhotoUrl = documents.profilePhoto?.existingUrl || null;
+        let profilePhotoName = documents.profilePhoto?.existingName || null;
+        let professionalCertUrl = documents.professionalCert?.existingUrl || null;
+        let professionalCertName = documents.professionalCert?.existingName || null;
 
-        // Upload Profile Photograph if attached
+        // Upload Profile Photograph if a new file was attached
         if (documents.profilePhoto?.file) {
           const photoData = new FormData();
           photoData.append('file', documents.profilePhoto.file);
@@ -296,7 +299,7 @@ export default function BusinessMembershipOnboarding() {
           }
         }
 
-        // Upload Professional Licence / Certification if attached
+        // Upload Professional Licence / Certification if a new file was attached
         if (documents.professionalCert?.file) {
           const certData = new FormData();
           certData.append('file', documents.professionalCert.file);
@@ -320,8 +323,13 @@ export default function BusinessMembershipOnboarding() {
           professionalCertName,
         };
 
-        const response = await fetch(getApiUrl('/onboarding/business'), {
-          method: 'POST',
+        const targetEndpoint = isModifyMode && submissionReference
+          ? `/onboarding/business/${submissionReference}`
+          : '/onboarding/business';
+        const targetMethod = isModifyMode && submissionReference ? 'PUT' : 'POST';
+
+        const response = await fetch(getApiUrl(targetEndpoint), {
+          method: targetMethod,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(submissionPayload),
         });
@@ -348,15 +356,42 @@ export default function BusinessMembershipOnboarding() {
           throw new Error(result.error || 'Server error occurred while storing submission.');
         }
 
-        if (!result.referenceId) {
+        const refId = result.referenceId || submissionReference;
+        if (!refId) {
           throw new Error('Database acknowledgment received without valid official reference ID.');
         }
 
-        setSubmissionReference(result.referenceId);
+        // Update cached documents in state with saved URLs so further modifies retain them
+        if (profilePhotoUrl) {
+          setDocuments((prev) => ({
+            ...prev,
+            profilePhoto: {
+              ...(prev.profilePhoto || {}),
+              file: null,
+              name: profilePhotoName || 'Profile Photograph',
+              existingUrl: profilePhotoUrl,
+              existingName: profilePhotoName,
+            },
+          }));
+        }
+        if (professionalCertUrl) {
+          setDocuments((prev) => ({
+            ...prev,
+            professionalCert: {
+              ...(prev.professionalCert || {}),
+              file: null,
+              name: professionalCertName || 'Professional Licence / Certificate',
+              existingUrl: professionalCertUrl,
+              existingName: professionalCertName,
+            },
+          }));
+        }
+
+        setSubmissionReference(refId);
         setFormSubmitted(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (err) {
-        console.error('Failed to post business application to backend:', err);
+        console.error('Failed to persist business application to backend:', err);
         setServerError(err.message || 'Unable to connect to the secure submission backend. Please try again.');
       } finally {
         setIsSubmitting(false);
@@ -832,7 +867,18 @@ export default function BusinessMembershipOnboarding() {
                       </a> quoting your reference ID.
                     </p>
                   </div>
-                  <button className="btn mt-3" onClick={() => setFormSubmitted(false)}>
+                  <button
+                    className="btn mt-3"
+                    onClick={() => {
+                      setIsModifyMode(true);
+                      setServerError('');
+                      setFormSubmitted(false);
+                      setTimeout(() => {
+                        const formEl = document.getElementById('onboarding-form');
+                        if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+                      }, 100);
+                    }}
+                  >
                     Review or Modify Form
                   </button>
                 </div>
@@ -843,6 +889,23 @@ export default function BusinessMembershipOnboarding() {
                   style={{ border: '1px solid #2A3649', padding: '36px 30px' }}
                   noValidate
                 >
+                  {isModifyMode && submissionReference && (
+                    <div style={{ background: 'rgba(214, 164, 59, 0.12)', border: '1px solid #D6A43B', color: '#F2C45D', padding: '14px 18px', borderRadius: '6px', marginBottom: '22px', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                      <div>
+                        <strong>Review &amp; Modify Mode:</strong> You are editing your submitted application (<span style={{ fontFamily: 'monospace' }}>{submissionReference}</span>). All your previously submitted values have been loaded. Modify any details and click &ldquo;Update &amp; Save Changes&rdquo; below.
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormSubmitted(true);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        style={{ background: 'transparent', border: '1px solid #D6A43B', color: '#D6A43B', padding: '4px 12px', borderRadius: '4px', fontSize: '12.5px', cursor: 'pointer' }}
+                      >
+                        Return to Confirmation
+                      </button>
+                    </div>
+                  )}
                   {serverError && (
                     <div style={{ background: 'rgba(220, 38, 38, 0.15)', border: '1px solid #ef4444', color: '#fca5a5', padding: '12px 16px', borderRadius: '6px', marginBottom: '20px', fontSize: '14px' }}>
                       <strong>Submission Alert:</strong> {serverError}
@@ -1537,7 +1600,9 @@ export default function BusinessMembershipOnboarding() {
 
                     <div className="col-12 mt-4">
                       <button className="btn onboarding-submit-btn" type="submit" style={{ width: '100%', minHeight: '50px' }} disabled={isSubmitting}>
-                        {isSubmitting ? 'Recording Submission in Database...' : 'Submit Business Membership Questionnaire'}
+                        {isSubmitting
+                          ? (isModifyMode ? 'Updating Application in Database...' : 'Recording Submission in Database...')
+                          : (isModifyMode ? 'Update & Save Changes' : 'Submit Business Membership Questionnaire')}
                       </button>
                     </div>
                   </div>

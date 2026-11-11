@@ -2,21 +2,35 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { query, queryOne, withTransaction, logAuditEvent } from '@/lib/db';
 import { getSessionAdmin } from '@/lib/auth';
-import { reviewStatusSchema } from '@/lib/validations';
+import { reviewStatusSchema, leadershipApplicationSchema } from '@/lib/validations';
 import { dispatchApplicationNotification, getApplicationNotifications } from '@/lib/notifications';
 
-// GET: Single Leadership Application full detail + review history
+// CORS headers for public website communication
+function corsHeaders(req: NextRequest) {
+  const origin = req.headers.get('origin') || '*';
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
+
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders(req),
+  });
+}
+
+// GET: Single Leadership Application full detail + review history (Admin or Applicant review)
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = getSessionAdmin(req);
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized access.' }, { status: 401 });
-  }
-
   try {
     const { id } = await params;
+    const session = getSessionAdmin(req);
 
     const application = await queryOne<Record<string, unknown>>(
       `SELECT
@@ -56,7 +70,7 @@ export async function GET(
     );
 
     if (!application) {
-      return NextResponse.json({ error: 'Application not found.' }, { status: 404 });
+      return NextResponse.json({ error: 'Application not found.' }, { status: 404, headers: corsHeaders(req) });
     }
 
     // Parse JSON array fields
@@ -67,28 +81,36 @@ export async function GET(
       try { application.geographicMarkets = JSON.parse(application.geographicMarkets); } catch { /* keep as string */ }
     }
 
-    const reviews = await query(
-      `SELECT
-        id,
-        application_type    AS applicationType,
-        admin_id            AS adminId,
-        admin_email         AS adminEmail,
-        previous_status     AS previousStatus,
-        new_status          AS newStatus,
-        review_note         AS reviewNote,
-        created_at          AS createdAt
-      FROM application_reviews
-      WHERE leadership_application_id = ?
-      ORDER BY created_at DESC`,
-      [id]
+    let reviews: any[] = [];
+    let notifications: any[] = [];
+
+    // Only attach admin reviews and notifications if authenticated as admin
+    if (session) {
+      reviews = await query(
+        `SELECT
+          id,
+          application_type    AS applicationType,
+          admin_id            AS adminId,
+          admin_email         AS adminEmail,
+          previous_status     AS previousStatus,
+          new_status          AS newStatus,
+          review_note         AS reviewNote,
+          created_at          AS createdAt
+        FROM application_reviews
+        WHERE leadership_application_id = ?
+        ORDER BY created_at DESC`,
+        [id]
+      );
+      notifications = await getApplicationNotifications(id);
+    }
+
+    return NextResponse.json(
+      { application: { ...application, reviews, notifications } },
+      { headers: corsHeaders(req) }
     );
-
-    const notifications = await getApplicationNotifications(id);
-
-    return NextResponse.json({ application: { ...application, reviews, notifications } });
   } catch (error: any) {
     console.error('Fetch leadership application detail error:', error);
-    return NextResponse.json({ error: 'Failed to retrieve application details.' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to retrieve application details.' }, { status: 500, headers: corsHeaders(req) });
   }
 }
 
@@ -270,5 +292,143 @@ export async function PATCH(
     }
     console.error('Update leadership application status error:', error);
     return NextResponse.json({ error: 'Failed to update application status.' }, { status: 500 });
+  }
+}
+
+// PUT: Applicant modifies their existing submission via Review & Modify
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await req.json();
+
+    const existing = await queryOne<{
+      id: string;
+      profile_photo_url: string | null;
+      profile_photo_name: string | null;
+      professional_cert_url: string | null;
+      professional_cert_name: string | null;
+      status: string;
+    }>(
+      `SELECT id, profile_photo_url, profile_photo_name, professional_cert_url, professional_cert_name, status
+       FROM leadership_applications WHERE id = ?`,
+      [id]
+    );
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Nomination record not found.' },
+        { status: 404, headers: corsHeaders(req) }
+      );
+    }
+
+    const parsed = leadershipApplicationSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: 'Validation failed on updated nomination data.',
+          details: parsed.error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })),
+        },
+        { status: 400, headers: corsHeaders(req) }
+      );
+    }
+
+    const data = parsed.data;
+
+    // Preserve existing uploaded documents unless explicitly modified or cleared
+    const profilePhotoUrl =
+      data.profilePhotoUrl !== undefined ? data.profilePhotoUrl?.trim() || null : existing.profile_photo_url;
+    const profilePhotoName =
+      data.profilePhotoName !== undefined ? data.profilePhotoName?.trim() || null : existing.profile_photo_name;
+    const professionalCertUrl =
+      data.professionalCertUrl !== undefined ? data.professionalCertUrl?.trim() || null : existing.professional_cert_url;
+    const professionalCertName =
+      data.professionalCertName !== undefined ? data.professionalCertName?.trim() || null : existing.professional_cert_name;
+
+    await withTransaction(async (conn) => {
+      await conn.query(
+        `UPDATE leadership_applications SET
+          full_name = ?,
+          official_email = ?,
+          country_code = ?,
+          mobile_whatsapp = ?,
+          city_country = ?,
+          time_zone_gmt = ?,
+          current_designation = ?,
+          organization_firm = ?,
+          website = ?,
+          primary_industry_domain = ?,
+          other_industry_domain = ?,
+          strategic_engagement = ?,
+          geographic_markets = ?,
+          linkedin_url = ?,
+          executive_summary = ?,
+          candidate_name = ?,
+          attestation_date = ?,
+          digital_signature = ?,
+          attestation_official_email = ?,
+          attestation_check = ?,
+          profile_photo_url = ?,
+          profile_photo_name = ?,
+          professional_cert_url = ?,
+          professional_cert_name = ?,
+          updated_at = NOW(3)
+        WHERE id = ?`,
+        [
+          data.fullName.trim(),
+          data.officialEmail.toLowerCase().trim(),
+          data.countryCode.trim(),
+          data.mobileWhatsApp.trim(),
+          data.cityCountry.trim(),
+          data.timeZoneGmt.trim(),
+          data.currentDesignation.trim(),
+          data.organizationFirm.trim(),
+          data.website?.trim() || null,
+          data.primaryIndustryDomain.trim(),
+          data.otherIndustryDomain?.trim() || null,
+          JSON.stringify(data.strategicEngagement),
+          JSON.stringify(data.geographicMarkets),
+          data.linkedInUrl?.trim() || null,
+          data.executiveSummary.trim(),
+          data.candidateName.trim(),
+          data.attestationDate.trim(),
+          data.digitalSignature.trim(),
+          data.attestationOfficialEmail.toLowerCase().trim(),
+          data.attestationCheck ? 1 : 0,
+          profilePhotoUrl,
+          profilePhotoName,
+          professionalCertUrl,
+          professionalCertName,
+          id,
+        ]
+      );
+    });
+
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
+    await logAuditEvent({
+      adminEmail: 'public_system',
+      action: 'UPDATE_LEADERSHIP_APP',
+      entityType: 'leadership_application',
+      entityId: id,
+      details: `Leadership nomination updated via Review & Modify for ${data.fullName.trim()} (${data.officialEmail.toLowerCase().trim()})`,
+      ipAddress: ip,
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        referenceId: id,
+        message: 'Your leadership & strategic position onboarding nomination has been successfully updated.',
+      },
+      { status: 200, headers: corsHeaders(req) }
+    );
+  } catch (error: any) {
+    console.error('Update leadership nomination via Review & Modify error:', error);
+    return NextResponse.json(
+      { error: 'An unexpected database error occurred while updating your nomination.' },
+      { status: 500, headers: corsHeaders(req) }
+    );
   }
 }
