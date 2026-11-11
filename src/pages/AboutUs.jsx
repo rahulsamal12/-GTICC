@@ -268,6 +268,42 @@ export default function AboutUs() {
               <strong>Legal Disclaimer:</strong> GTICC facilitates introductions and collaboration pathways but does not guarantee funding, approvals, buyers, contracts, partnerships, or commercial outcomes. All formal engagements are subject to internal review and qualification.
             </p>
           </div>
+
+          {/* Legal Governance & Policy Access Buttons */}
+          <div className="d-flex justify-content-center align-items-center gap-3 mt-4 flex-wrap">
+            <Link
+              to="/terms-of-use"
+              className="btn btn-ghost"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 28px',
+                fontSize: '15px',
+                fontWeight: '600',
+                letterSpacing: '0.4px',
+              }}
+            >
+              <i className="fa-solid fa-file-contract" style={{ color: '#C8A24A' }}></i>
+              <span>Terms of Use</span>
+            </Link>
+            <Link
+              to="/privacy-policy"
+              className="btn btn-ghost"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 28px',
+                fontSize: '15px',
+                fontWeight: '600',
+                letterSpacing: '0.4px',
+              }}
+            >
+              <i className="fa-solid fa-user-shield" style={{ color: '#C8A24A' }}></i>
+              <span>Privacy Policy</span>
+            </Link>
+          </div>
         </div>
       </section>
 

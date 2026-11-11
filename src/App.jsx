@@ -37,6 +37,8 @@ import FAQ from './pages/FAQ';
 import Error404 from './pages/Error404';
 import Leadership from './pages/Leadership';
 import AdvisoryCouncil from './pages/AdvisoryCouncil';
+import TermsOfUse from './pages/TermsOfUse';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 export default function App() {
   return (
@@ -50,6 +52,8 @@ export default function App() {
           <Route path="about-us" element={<AboutUs />} />
           <Route path="about-us/leadership" element={<Leadership />} />
           <Route path="about-us/advisory-council" element={<AdvisoryCouncil />} />
+          <Route path="terms-of-use" element={<TermsOfUse />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="contact-us" element={<ContactUs />} />
           
           {/* Membership Nested Routes */}
