@@ -30,6 +30,9 @@ export default function ContactUs() {
       }
       setReferenceId(result.referenceId || '');
       setSubmitted(true);
+      // Clear form inputs only upon successful database persistence
+      setFormData({ name: '', organization: '', email: '', country: '', message: '' });
+      setInterestType('');
     } catch (err) {
       console.error('Enquiry submission error:', err);
       setServerError(err.message || 'Unable to submit enquiry. Please try again.');

@@ -6,6 +6,7 @@ export interface BrevoEmailPayload {
   htmlContent: string;
   textContent: string;
   sender?: { name: string; email: string };
+  replyTo?: { email: string; name?: string };
 }
 
 export interface BrevoSendResult {
@@ -63,6 +64,7 @@ export async function sendBrevoEmail(payload: BrevoEmailPayload): Promise<BrevoS
       email: config.senderEmail,
     },
     to: payload.to,
+    replyTo: payload.replyTo,
     subject: payload.subject,
     htmlContent: payload.htmlContent,
     textContent: payload.textContent,
@@ -366,6 +368,132 @@ https://gticc.org
     <div class="footer" style="background-color: #040d1a; padding: 24px; text-align: center; border-top: 1px solid rgba(212, 179, 92, 0.2); font-size: 12.5px; color: #94a3b8; line-height: 1.6;">
       &copy; ${new Date().getFullYear()} Global Trade &amp; Investment Chamber of Commerce (GTICC). All rights reserved.<br>
       This message is sent in reference to submission #${escapeHtml(ctx.applicationId)}.
+    </div>
+  </div>
+</body>
+</html>
+`.trim();
+
+  return { subject, html, text };
+}
+
+export interface EnquiryEmailContext {
+  enquiryId: string;
+  name: string;
+  organization: string;
+  email: string;
+  country?: string | null;
+  interestType: string;
+  message: string;
+  submittedAt: string;
+}
+
+/**
+ * Builds responsive, professional GTICC notification email for new strategic collaboration enquiry
+ */
+export function buildEnquiryNotificationEmail(ctx: EnquiryEmailContext): { subject: string; html: string; text: string } {
+  const subject = `New Strategic Collaboration Enquiry – GTICC (${ctx.enquiryId})`;
+
+  const text = `
+NEW STRATEGIC COLLABORATION ENQUIRY RECEIVED
+==================================================
+
+A new strategic collaboration enquiry has been submitted through the GTICC portal.
+
+ENQUIRY DETAILS:
+--------------------------------------------------
+Enquiry ID:        ${ctx.enquiryId}
+Applicant Name:    ${ctx.name}
+Organization:      ${ctx.organization}
+Email Address:     ${ctx.email}
+Country:           ${ctx.country || 'Not Specified'}
+Interest Type:     ${ctx.interestType}
+Submission Date:   ${ctx.submittedAt}
+
+MESSAGE:
+--------------------------------------------------
+${ctx.message}
+
+--------------------------------------------------
+GTICC Executive Triage Desk
+Global Trade & Investment Commercial Community
+`.trim();
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${escapeHtml(subject)}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #060e1a; margin: 0; padding: 24px; color: #f1f5f9; }
+    .container { max-width: 640px; margin: 0 auto; background-color: #0c1a2d; border: 1px solid rgba(212, 179, 92, 0.4); border-radius: 8px; overflow: hidden; }
+    .header { background: linear-gradient(135deg, #040d1a 0%, #0d1f36 100%); padding: 32px 24px; text-align: center; border-bottom: 2px solid #d4b35c; }
+    .logo-badge { color: #d4b35c; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .title { color: #ffffff; font-size: 22px; font-weight: 700; margin: 0; }
+    .body { padding: 32px 28px; line-height: 1.7; font-size: 15px; }
+    .meta-box { background-color: #071221; border-left: 4px solid #d4b35c; border-top: 1px solid rgba(255,255,255,0.06); border-right: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 18px 20px; border-radius: 4px; margin: 20px 0; }
+    .table-details { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+    .table-details td { padding: 7px 0; vertical-align: top; }
+    .table-details td.label { width: 140px; color: #94a3b8; font-weight: 500; }
+    .table-details td.val { color: #ffffff; font-weight: 600; }
+    .message-card { background-color: #071221; border: 1px solid rgba(212, 179, 92, 0.25); border-radius: 6px; padding: 18px 20px; margin: 20px 0; color: #e2e8f0; font-size: 14.5px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+    .footer { background-color: #040d1a; padding: 22px; text-align: center; border-top: 1px solid rgba(212, 179, 92, 0.2); font-size: 12.5px; color: #94a3b8; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-badge">GTICC EXECUTIVE TRIAGE &bull; INCOMING ENQUIRY</div>
+      <h1 class="title">New Strategic Collaboration Enquiry</h1>
+    </div>
+    <div class="body">
+      <p style="color: #f1f5f9; margin-top: 0;">A new visitor has submitted the <strong>Start a Strategic Collaboration</strong> enquiry form on GTICC.COM.</p>
+
+      <div class="meta-box">
+        <table class="table-details">
+          <tr>
+            <td class="label">Enquiry ID:</td>
+            <td class="val"><span style="font-family: monospace; color: #d4b35c; font-size: 13.5px;">${escapeHtml(ctx.enquiryId)}</span></td>
+          </tr>
+          <tr>
+            <td class="label">Applicant Name:</td>
+            <td class="val">${escapeHtml(ctx.name)}</td>
+          </tr>
+          <tr>
+            <td class="label">Organization:</td>
+            <td class="val">${escapeHtml(ctx.organization)}</td>
+          </tr>
+          <tr>
+            <td class="label">Email Address:</td>
+            <td class="val"><a href="mailto:${escapeHtml(ctx.email)}" style="color: #60a5fa; text-decoration: none;">${escapeHtml(ctx.email)}</a></td>
+          </tr>
+          <tr>
+            <td class="label">Country:</td>
+            <td class="val">${escapeHtml(ctx.country || 'Not Specified')}</td>
+          </tr>
+          <tr>
+            <td class="label">Interest Type:</td>
+            <td class="val"><span style="background: rgba(212, 179, 92, 0.15); color: #d4b35c; padding: 2px 8px; border-radius: 4px; font-size: 13px;">${escapeHtml(ctx.interestType)}</span></td>
+          </tr>
+          <tr>
+            <td class="label">Submission Date:</td>
+            <td class="val" style="color: #cbd5e1; font-weight: normal;">${escapeHtml(ctx.submittedAt)} (IST)</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="color: #d4b35c; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 24px;">Enquiry Message:</div>
+      <div class="message-card">${escapeHtml(ctx.message)}</div>
+
+      <p style="font-size: 13.5px; color: #94a3b8; margin-top: 24px;">
+        &bull; You can reply directly to this notification to email <strong>${escapeHtml(ctx.email)}</strong>.<br>
+        &bull; This enquiry has been logged permanently in the GTICC Admin Panel.
+      </p>
+    </div>
+    <div class="footer">
+      &copy; ${new Date().getFullYear()} Global Trade &amp; Investment Commercial Community (GTICC).<br>
+      Notification dispatched to gticcofficial@gmail.com for reference #${escapeHtml(ctx.enquiryId)}.
     </div>
   </div>
 </body>

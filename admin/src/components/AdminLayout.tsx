@@ -13,6 +13,7 @@ import {
   X,
   Globe2,
   ShieldCheck,
+  MailQuestion,
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -48,6 +49,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const navItems = [
     { label: 'Onboarding Responses', href: '/responses', icon: FileCheck },
+    { label: 'Collaboration Enquiries', href: '/enquiries', icon: MailQuestion },
   ];
 
   if (loading) {
