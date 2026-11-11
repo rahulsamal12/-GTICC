@@ -53,7 +53,7 @@ export default function Sectors() {
     setCurrentIndex((prev) => prev - 1);
   }, []);
 
-  // Continuous auto-scrolling with smooth 2.6s cadence
+  // Fast, continuous automatic right-to-left scrolling (1.15s per card = ~6.9s full 6-card cycle)
   useEffect(() => {
     if (isHovered) {
       if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
@@ -65,7 +65,7 @@ export default function Sectors() {
       isTransitioningRef.current = true;
       setTransitionEnabled(true);
       setCurrentIndex((prev) => prev + 1);
-    }, 2600);
+    }, 1150);
 
     return () => {
       if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
@@ -98,13 +98,13 @@ export default function Sectors() {
     }
   }, [transitionEnabled]);
 
-  // User manual interaction pauses auto-scroll and resumes smoothly after 3 seconds
+  // User manual interaction pauses auto-scroll and resumes smoothly after 2.5 seconds
   const pauseAndResumeAfterDelay = useCallback(() => {
     setIsHovered(true);
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
     resumeTimerRef.current = setTimeout(() => {
       setIsHovered(false);
-    }, 3000);
+    }, 2500);
   }, []);
 
   const onManualNext = () => {
@@ -172,7 +172,7 @@ export default function Sectors() {
           justify-content: center;
           cursor: pointer;
           z-index: 20;
-          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
           box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
           outline: none;
           padding: 0;
@@ -246,7 +246,7 @@ export default function Sectors() {
           background-color: rgba(255, 255, 255, 0.35);
           cursor: pointer;
           padding: 0;
-          transition: background-color 0.3s ease, transform 0.3s ease;
+          transition: background-color 0.25s ease, transform 0.25s ease;
         }
 
         .dot-indicator:hover {
@@ -311,7 +311,7 @@ export default function Sectors() {
                 className="gticc-carousel-track"
                 style={{
                   transform: `translateX(calc(-${currentIndex} * (var(--card-width) + var(--card-gap))))`,
-                  transition: transitionEnabled ? 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)' : 'none',
+                  transition: transitionEnabled ? 'transform 0.48s cubic-bezier(0.25, 1, 0.5, 1)' : 'none',
                 }}
                 onTransitionEnd={handleTransitionEnd}
               >
