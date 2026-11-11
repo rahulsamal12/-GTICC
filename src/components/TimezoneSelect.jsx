@@ -211,7 +211,11 @@ export default function TimezoneSelect({
     }
   }, [highlightedIndex, isOpen]);
 
-  const handleSelect = (tz) => {
+  const handleSelect = (tz, e) => {
+    if (e) {
+      if (typeof e.preventDefault === 'function') e.preventDefault();
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+    }
     if (onChange) {
       // Save formatted value: e.g. "Asia/Kolkata (GMT+05:30)"
       onChange(tz.value, tz);
@@ -225,6 +229,7 @@ export default function TimezoneSelect({
     if (!isOpen) {
       if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        e.stopPropagation();
         setIsOpen(true);
       }
       return;
@@ -232,20 +237,24 @@ export default function TimezoneSelect({
 
     if (e.key === 'Escape') {
       e.preventDefault();
+      e.stopPropagation();
       setIsOpen(false);
       if (triggerRef.current) triggerRef.current.focus();
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
+      e.stopPropagation();
       setHighlightedIndex((prev) =>
         prev < filteredTimezones.length - 1 ? prev + 1 : prev
       );
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
+      e.stopPropagation();
       setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
     } else if (e.key === 'Enter') {
       e.preventDefault();
+      e.stopPropagation();
       if (filteredTimezones[highlightedIndex]) {
-        handleSelect(filteredTimezones[highlightedIndex]);
+        handleSelect(filteredTimezones[highlightedIndex], e);
       }
     } else if (e.key === 'Tab') {
       setIsOpen(false);
@@ -271,7 +280,11 @@ export default function TimezoneSelect({
         type="button"
         id={id}
         disabled={disabled}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!disabled) setIsOpen(!isOpen);
+        }}
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -454,7 +467,11 @@ export default function TimezoneSelect({
                 {searchQuery && (
                   <button
                     type="button"
-                    onClick={() => setSearchQuery('')}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSearchQuery('');
+                    }}
                     style={{
                       position: 'absolute',
                       right: '10px',
@@ -531,7 +548,11 @@ export default function TimezoneSelect({
                       key={tz.iana}
                       role="option"
                       aria-selected={isSelected}
-                      onClick={() => handleSelect(tz)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleSelect(tz, e);
+                      }}
                       onMouseEnter={() => setHighlightedIndex(index)}
                       style={{
                         padding: '9px 12px',

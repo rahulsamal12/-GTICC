@@ -60,17 +60,36 @@ export default function CountryCodeSelect({
     return matches[0];
   }, [value]);
 
-  // Filtered countries based on search
+  // Filtered and ranked countries based on search
   const filteredCountries = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return countries;
-    return countries.filter((c) => {
-      const nameMatch = c.name.toLowerCase().includes(q);
-      const codeMatch = c.code.toLowerCase().includes(q);
-      const dialClean = c.dialCode.replace('+', '').toLowerCase();
-      const dialMatch = c.dialCode.toLowerCase().includes(q) || dialClean.includes(q.replace('+', ''));
-      return nameMatch || codeMatch || dialMatch;
-    });
+
+    const rank = (c) => {
+      const name = c.name.toLowerCase();
+      const code = c.code.toLowerCase();
+      const dial = c.dialCode.toLowerCase();
+      const dialClean = dial.replace('+', '');
+      const qClean = q.replace('+', '');
+
+      if (code === q) return 1;
+      if (dial === q || dialClean === qClean) return 2;
+      if (name === q) return 3;
+      if (name.startsWith(q)) return 4;
+      if (code.startsWith(q)) return 5;
+      if (dialClean.startsWith(qClean)) return 6;
+      return 7;
+    };
+
+    return countries
+      .filter((c) => {
+        const nameMatch = c.name.toLowerCase().includes(q);
+        const codeMatch = c.code.toLowerCase().includes(q);
+        const dialClean = c.dialCode.replace('+', '').toLowerCase();
+        const dialMatch = c.dialCode.toLowerCase().includes(q) || dialClean.includes(q.replace('+', ''));
+        return nameMatch || codeMatch || dialMatch;
+      })
+      .sort((a, b) => rank(a) - rank(b));
   }, [searchQuery]);
 
   // Keep highlighted item reset on query change
@@ -182,7 +201,11 @@ export default function CountryCodeSelect({
     }
   }, [highlightedIndex, isOpen]);
 
-  const handleSelect = (country) => {
+  const handleSelect = (country, e) => {
+    if (e) {
+      if (typeof e.preventDefault === 'function') e.preventDefault();
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+    }
     if (onChange) {
       onChange(country.dialCode, country);
     }
@@ -195,6 +218,7 @@ export default function CountryCodeSelect({
     if (!isOpen) {
       if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        e.stopPropagation();
         setIsOpen(true);
       }
       return;
@@ -202,20 +226,24 @@ export default function CountryCodeSelect({
 
     if (e.key === 'Escape') {
       e.preventDefault();
+      e.stopPropagation();
       setIsOpen(false);
       if (triggerRef.current) triggerRef.current.focus();
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
+      e.stopPropagation();
       setHighlightedIndex((prev) =>
         prev < filteredCountries.length - 1 ? prev + 1 : prev
       );
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
+      e.stopPropagation();
       setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
     } else if (e.key === 'Enter') {
       e.preventDefault();
+      e.stopPropagation();
       if (filteredCountries[highlightedIndex]) {
-        handleSelect(filteredCountries[highlightedIndex]);
+        handleSelect(filteredCountries[highlightedIndex], e);
       }
     } else if (e.key === 'Tab') {
       setIsOpen(false);
@@ -245,7 +273,11 @@ export default function CountryCodeSelect({
         type="button"
         id={id}
         disabled={disabled}
-        onClick={() => !disabled && setIsOpen((prev) => !prev)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!disabled) setIsOpen((prev) => !prev);
+        }}
         onKeyDown={handleKeyDown}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -437,7 +469,11 @@ export default function CountryCodeSelect({
                 {searchQuery && (
                   <button
                     type="button"
-                    onClick={() => setSearchQuery('')}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSearchQuery('');
+                    }}
                     style={{
                       position: 'absolute',
                       right: '10px',
@@ -498,7 +534,11 @@ export default function CountryCodeSelect({
                       key={`${country.code}-${country.dialCode}`}
                       role="option"
                       aria-selected={isSelected}
-                      onClick={() => handleSelect(country)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleSelect(country, e);
+                      }}
                       onMouseEnter={() => setHighlightedIndex(index)}
                       style={{
                         display: 'flex',
