@@ -3,111 +3,6 @@ import { Link } from 'react-router-dom';
 import ResponsiveSlider from '../components/ResponsiveSlider';
 import { getApiUrl } from '../api/client';
 
-const mockMembers = [
-  {
-    orgName: "Apex Tech Solutions",
-    logo: "/gticc_logo_new.webp",
-    memberName: "John Doe",
-    designation: "CEO & Founder",
-    country: "Canada",
-    city: "Toronto",
-    sector: "Technology",
-    tier: "Corporate Member",
-    orgType: "Corporation",
-    services: "Software Engineering, AI Consulting, Cloud Architecture",
-    interests: "Joint ventures, market expansion, tech partnerships",
-    description: "A leading provider of custom enterprise software solutions, artificial intelligence integrations, and secure cloud consulting services in North America.",
-    website: "https://apextechsolutions.example.com",
-    linkedIn: "https://linkedin.com/company/apex-tech-solutions",
-    showPublicContact: true
-  },
-  {
-    orgName: "Global Health Partners",
-    logo: "/gticc_logo_new.webp",
-    memberName: "Dr. Sarah Jenkins",
-    designation: "Managing Director",
-    country: "United Kingdom",
-    city: "London",
-    sector: "Healthcare",
-    tier: "Global Partner Member",
-    orgType: "Institution",
-    services: "Medical Research, Healthcare Consulting, Clinical Trials Coordination",
-    interests: "Cross-border health initiatives, clinical partnerships, regulatory consulting",
-    description: "Connecting clinical institutions, universities, and pharmaceutical companies across European and Canadian corridors to foster medical innovation.",
-    website: "https://globalhealthpartners.example.com",
-    linkedIn: "https://linkedin.com/company/global-health-partners",
-    showPublicContact: true
-  },
-  {
-    orgName: "Vanguard Capital Group",
-    logo: "/gticc_logo_new.webp",
-    memberName: "Robert Chen",
-    designation: "Managing Partner",
-    country: "Singapore",
-    city: "Singapore",
-    sector: "Trade & Investment",
-    tier: "Growth Member",
-    orgType: "Investor",
-    services: "Venture Capital, Market Advisory, Investment Underwriting",
-    interests: "Early-stage startups, sector roundtables, coinvestment opportunities",
-    description: "Venture capital firm focusing on investments in cross-border tech startups, digital infrastructure, and clean energy projects in emerging markets.",
-    website: "https://vanguardcapital.example.com",
-    linkedIn: "https://linkedin.com/company/vanguard-capital",
-    showPublicContact: false
-  },
-  {
-    orgName: "Horizon Logistics",
-    logo: "/gticc_logo_new.webp",
-    memberName: "Elena Rostova",
-    designation: "Head of Trade Logistics",
-    country: "Germany",
-    city: "Frankfurt",
-    sector: "Infrastructure",
-    tier: "Business Starter",
-    orgType: "SME",
-    services: "Customs Brokering, Freight Forwarding, Warehousing",
-    interests: "Supply chain partners, exporter networking, trade missions",
-    description: "Specialized logistics and freight forwarding partner facilitating trade corridors and custom clearances between EU countries and Canada.",
-    website: "https://horizonlogistics.example.com",
-    linkedIn: "https://linkedin.com/company/horizon-logistics",
-    showPublicContact: true
-  },
-  {
-    orgName: "Ontario EduTech",
-    logo: "/gticc_logo_new.webp",
-    memberName: "David Miller",
-    designation: "Director of Partnerships",
-    country: "Canada",
-    city: "Toronto",
-    sector: "Education",
-    tier: "Professional Member",
-    orgType: "Professional Services",
-    services: "E-learning Platforms, Curriculum Design, Corporate Training",
-    interests: "Institutional visibility, education partnerships, program hosting",
-    description: "Delivering digital learning platforms, educational content, and corporate skills development programs for institutions and businesses worldwide.",
-    website: "https://ontarioedutech.example.com",
-    linkedIn: "https://linkedin.com/company/ontario-edutech",
-    showPublicContact: false
-  },
-  {
-    orgName: "Gulf Trade Logistics",
-    logo: "/gticc_logo_new.webp",
-    memberName: "Faisal Al-Mansoori",
-    designation: "VP of Trade Development",
-    country: "UAE",
-    city: "Dubai",
-    sector: "Trade & Investment",
-    tier: "Global Partner Member",
-    orgType: "Trade / Sector Association",
-    services: "Supply Chain Management, Logistics Optimization, Trade Advisory",
-    interests: "Joint ventures, technology transfer, manufacturing alliances",
-    description: "Facilitating multi-modal logistics, warehouse infrastructure development, and cross-border trade corridors across the Middle East and Canada.",
-    website: "https://gulftradelogistics.example.com",
-    linkedIn: "https://linkedin.com/company/gulf-trade-logistics",
-    showPublicContact: true
-  }
-];
-
 export default function MemberDirectory() {
   // SEO Metadata
   useEffect(() => {
@@ -127,24 +22,32 @@ export default function MemberDirectory() {
   const [service, setService] = useState('All');
   const [interest, setInterest] = useState('All');
 
-  // Dynamic Members State from Database
-  const [membersList, setMembersList] = useState(mockMembers);
+  // Dynamic Members State from Live Database
+  const [membersList, setMembersList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   useEffect(() => {
-    fetch(getApiUrl('/members'))
-      .then(res => res.json())
+    setIsLoading(true);
+    fetch(getApiUrl('/member-directory'))
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        return res.json();
+      })
       .then(data => {
-        if (data.members && data.members.length > 0) {
+        if (data.members && Array.isArray(data.members)) {
           const formatted = data.members.map(m => ({
-            orgName: m.org_name,
+            id: m.id,
+            applicationId: m.applicationId,
+            orgName: m.org_name || 'Enterprise Member',
             logo: m.logo || '/gticc_logo_new.webp',
-            memberName: m.member_name,
-            designation: m.designation,
-            country: m.country,
-            city: m.city,
-            sector: m.sector,
-            tier: m.tier,
-            orgType: m.org_type,
+            memberName: m.member_name || 'Corporate Representative',
+            designation: m.designation || 'Director',
+            country: m.country || 'Global',
+            city: m.city || 'Global',
+            sector: m.sector || 'Trade & Investment',
+            tier: m.tier || 'Corporate Member',
+            orgType: m.org_type || 'Enterprise Corporation',
             services: m.services || '',
             interests: m.interests || '',
             description: m.description || '',
@@ -153,10 +56,18 @@ export default function MemberDirectory() {
             showPublicContact: Boolean(m.show_public_contact)
           }));
           setMembersList(formatted);
+          setLoadError(null);
+        } else {
+          setMembersList([]);
         }
       })
       .catch(err => {
-        console.warn('Could not fetch from live database API, utilizing cached directory records:', err);
+        console.error('Failed to fetch dynamic members directory:', err);
+        setLoadError('Failed to load the active member directory. Please check your connection.');
+        setMembersList([]);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -399,13 +310,31 @@ export default function MemberDirectory() {
             </div>
           </div>
 
-          {/* Results count */}
-          <div className="mb-4 text-white-50">
-            Showing <strong>{filteredMembers.length}</strong> matching members
-          </div>
+          {/* Results count & loading/error state */}
+          {isLoading && (
+            <div className="text-center py-5">
+              <div className="spinner-border text-warning" role="status" style={{ color: '#C8A24A' }}>
+                <span className="visually-hidden">Loading Member Directory...</span>
+              </div>
+              <p className="text-white-50 mt-3" style={{ fontSize: '15px' }}>Loading verified members from consortium database...</p>
+            </div>
+          )}
+
+          {loadError && !isLoading && (
+            <div className="gticc-card p-4 mb-4 text-center" style={{ border: '1px solid rgba(239, 68, 68, 0.4)', background: 'rgba(239, 68, 68, 0.1)' }}>
+              <p className="text-white mb-2">{loadError}</p>
+              <button className="btn btn-sm" onClick={() => window.location.reload()}>Retry</button>
+            </div>
+          )}
+
+          {!isLoading && (
+            <div className="mb-4 text-white-50">
+              Showing <strong>{filteredMembers.length}</strong> matching members
+            </div>
+          )}
 
           {/* Grid of members */}
-          {filteredMembers.length > 0 ? (
+          {!isLoading && filteredMembers.length > 0 && (
             <ResponsiveSlider desktopClass="grid-wrapper grid-xl-3 grid-md-2 grid-xs-1">
               {filteredMembers.map((member, idx) => (
                 <article className="gticc-member-card" key={idx}>
@@ -446,12 +375,19 @@ export default function MemberDirectory() {
                   <div className="contact-links-wrapper">
                     {member.showPublicContact ? (
                       <>
-                        <a href={member.website} target="_blank" rel="noopener noreferrer" className="contact-link">
-                          <i className="fa-solid fa-globe"></i> Website
-                        </a>
-                        <a href={member.linkedIn} target="_blank" rel="noopener noreferrer" className="contact-link">
-                          <i className="fa-brands fa-linkedin"></i> LinkedIn
-                        </a>
+                        {member.website && (
+                          <a href={member.website.startsWith('http') ? member.website : `https://${member.website}`} target="_blank" rel="noopener noreferrer" className="contact-link">
+                            <i className="fa-solid fa-globe"></i> Website
+                          </a>
+                        )}
+                        {member.linkedIn && (
+                          <a href={member.linkedIn.startsWith('http') ? member.linkedIn : `https://${member.linkedIn}`} target="_blank" rel="noopener noreferrer" className="contact-link">
+                            <i className="fa-brands fa-linkedin"></i> LinkedIn
+                          </a>
+                        )}
+                        {!member.website && !member.linkedIn && (
+                          <span className="text-white-50" style={{ fontSize: '13px' }}>Verified GTICC Member</span>
+                        )}
                       </>
                     ) : (
                       <span className="text-white-50" style={{ fontSize: '13px', fontStyle: 'italic' }}>
@@ -462,7 +398,9 @@ export default function MemberDirectory() {
                 </article>
               ))}
             </ResponsiveSlider>
-          ) : (
+          )}
+
+          {!isLoading && filteredMembers.length === 0 && !loadError && (
             <div className="gticc-card p-5 text-center" style={{ border: '1px dashed rgba(200, 162, 74, 0.3)' }}>
               <h4 className="text-white mb-2">No Matching Members Found</h4>
               <p className="text-white-50 mb-3">Adjust your filters to see more members in the consortium.</p>

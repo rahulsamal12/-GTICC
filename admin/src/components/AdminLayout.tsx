@@ -49,6 +49,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const navItems = [
     { label: 'Onboarding Responses', href: '/responses', icon: FileCheck },
+    { label: 'Member Directory', href: '/directory', icon: Building2 },
     { label: 'Collaboration Enquiries', href: '/enquiries', icon: MailQuestion },
   ];
 

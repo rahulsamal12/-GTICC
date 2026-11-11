@@ -12,6 +12,7 @@ import {
   XCircle,
   Clock,
   Eye,
+  EyeOff,
   Calendar,
   ChevronLeft,
   ChevronRight,
@@ -527,6 +528,50 @@ export default function ResponsesPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
+                        {/* Directory Show/Hide button if Accepted business application */}
+                        {activeTab === 'business' && detailData.application.status === 'ACCEPTED' && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              const cur = detailData.application.directoryVisible !== 0;
+                              try {
+                                const res = await fetch(`/api/member-directory/${selectedId}`, {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ visible: !cur }),
+                                });
+                                if (res.ok) {
+                                  queryClient.invalidateQueries({ queryKey: ['submissionDetail'] });
+                                  queryClient.invalidateQueries({ queryKey: ['responses'] });
+                                  setActionResultBanner({
+                                    type: 'success',
+                                    text: `Member listing visibility updated to ${!cur ? 'Visible' : 'Hidden'} in public directory.`,
+                                  });
+                                }
+                              } catch (e: any) {
+                                alert(e.message || 'Failed to update visibility');
+                              }
+                            }}
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                              detailData.application.directoryVisible !== 0
+                                ? 'bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border-amber-700/50'
+                                : 'bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-700/50'
+                            }`}
+                          >
+                            {detailData.application.directoryVisible !== 0 ? (
+                              <>
+                                <EyeOff size={13} />
+                                <span>Hide from Directory</span>
+                              </>
+                            ) : (
+                              <>
+                                <Eye size={13} />
+                                <span>Show in Directory</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+
                         {/* Only allow decisions if application is PENDING. Final decisions are permanent & read-only */}
                         {detailData.application.status === 'PENDING' ? (
                           <>

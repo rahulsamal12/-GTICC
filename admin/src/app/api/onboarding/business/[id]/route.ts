@@ -4,6 +4,7 @@ import { query, queryOne, withTransaction, logAuditEvent } from '@/lib/db';
 import { getSessionAdmin } from '@/lib/auth';
 import { reviewStatusSchema, businessApplicationSchema } from '@/lib/validations';
 import { dispatchApplicationNotification, getApplicationNotifications } from '@/lib/notifications';
+import { syncBusinessApplicationToDirectory } from '@/lib/directorySync';
 
 // CORS headers for public website communication
 function corsHeaders(req: NextRequest) {
@@ -67,6 +68,7 @@ export async function GET(
         professional_cert_url    AS professionalCertUrl,
         professional_cert_name   AS professionalCertName,
         UPPER(status)            AS status,
+        COALESCE(directory_visible, 1) AS directoryVisible,
         admin_notes              AS adminNotes,
         reviewed_by              AS reviewedBy,
         reviewed_at              AS reviewedAt,
@@ -240,6 +242,9 @@ export async function PATCH(
         details: `Business application status changed from ${previousStatus} to ${newStatus}.${note ? ` Note: ${note.trim()}` : ''}`,
         ipAddress: ip,
       }, conn);
+
+      // Auto-sync application to members directory
+      await syncBusinessApplicationToDirectory(id, conn);
     });
 
     if (isAlreadySameFinalDecision) {
@@ -419,6 +424,9 @@ export async function PUT(
           id,
         ]
       );
+
+      // Sync updated business details to directory if approved
+      await syncBusinessApplicationToDirectory(id, conn);
     });
 
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
