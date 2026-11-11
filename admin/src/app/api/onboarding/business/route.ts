@@ -154,6 +154,17 @@ export async function POST(req: NextRequest) {
     const id = crypto.randomUUID();
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
 
+    const formatMysqlDate = (isoStr?: string | null) => {
+      if (!isoStr) return new Date().toISOString().slice(0, 19).replace('T', ' ');
+      try {
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return new Date().toISOString().slice(0, 19).replace('T', ' ');
+        return d.toISOString().slice(0, 19).replace('T', ' ');
+      } catch {
+        return new Date().toISOString().slice(0, 19).replace('T', ' ');
+      }
+    };
+
     await execute(
       `INSERT INTO business_applications (
         id, legal_entity_name, corporate_website, rep_full_name, corporate_title,
@@ -161,9 +172,10 @@ export async function POST(req: NextRequest) {
         primary_industry_sector, other_industry_sector, primary_business_model, annual_turnover,
         exim_status, target_markets, trade_objectives, auth_officer_name, auth_corporate_title,
         auth_corporate_email, auth_submission_date, auth_signature_seal, affirmation,
+        terms_accepted, privacy_acknowledged, terms_accepted_at, privacy_acknowledged_at, legal_version,
         profile_photo_url, profile_photo_name, professional_cert_url, professional_cert_name,
         status, created_at, updated_at
-      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))`,
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))`,
       [
         id,
         data.legalEntityName.trim(),
@@ -188,6 +200,11 @@ export async function POST(req: NextRequest) {
         data.authSubmissionDate.trim(),
         data.authSignatureSeal.trim(),
         data.affirmation ? 1 : 0,
+        data.termsAccepted ? 1 : 0,
+        data.privacyAcknowledged ? 1 : 0,
+        formatMysqlDate(data.termsAcceptedAt),
+        formatMysqlDate(data.privacyAcknowledgedAt),
+        data.legalVersion || 'v1.0-2026',
         data.profilePhotoUrl?.trim() || null,
         data.profilePhotoName?.trim() || null,
         data.professionalCertUrl?.trim() || null,

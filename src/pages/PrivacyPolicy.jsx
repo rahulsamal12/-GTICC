@@ -1,12 +1,36 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import './LegalPage.css';
 
 export default function PrivacyPolicy() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const returnUrl = searchParams.get('return') || '';
+  const fromForm = searchParams.get('from') || '';
+
   useEffect(() => {
     document.title = 'GTICC Privacy Policy | Global Trade and Investment Collaboration Consortium';
     window.scrollTo(0, 0);
   }, []);
+
+  const handleAcceptPrivacy = () => {
+    const timestamp = new Date().toISOString();
+    // Record explicit acknowledgment in sessionStorage
+    sessionStorage.setItem('gticc_privacy_acknowledged', 'true');
+    sessionStorage.setItem('gticc_privacy_acknowledged_at', timestamp);
+
+    if (returnUrl) {
+      navigate(returnUrl);
+    } else if (fromForm === 'leadership') {
+      navigate('/leadership-onboarding');
+    } else if (fromForm === 'business') {
+      navigate('/business-onboarding');
+    } else {
+      navigate(-1);
+    }
+  };
+
+  const formLabel = fromForm === 'leadership' ? 'Leadership Questionnaire' : 'Business Membership Form';
 
   return (
     <div className="site-content gticc-legal-page">
@@ -26,10 +50,21 @@ export default function PrivacyPolicy() {
         <div className="container">
           {/* Sub Navigation Bar */}
           <div className="gticc-legal-nav-bar">
-            <Link to="/about-us" className="gticc-legal-btn">
-              <i className="fa-solid fa-arrow-left"></i>
-              <span>Back to About GTICC</span>
-            </Link>
+            {returnUrl || fromForm ? (
+              <button
+                type="button"
+                onClick={() => (returnUrl ? navigate(returnUrl) : navigate(-1))}
+                className="gticc-legal-btn"
+              >
+                <i className="fa-solid fa-arrow-left"></i>
+                <span>Return to {formLabel}</span>
+              </button>
+            ) : (
+              <Link to="/about-us" className="gticc-legal-btn">
+                <i className="fa-solid fa-arrow-left"></i>
+                <span>Back to About GTICC</span>
+              </Link>
+            )}
             <span className="gticc-legal-badge">
               <i className="fa-regular fa-clock"></i>
               Last Updated: November 3, 2026
@@ -386,12 +421,39 @@ export default function PrivacyPolicy() {
               </p>
             </div>
 
-            {/* Bottom Back Button */}
-            <div className="mt-5 text-center">
-              <Link to="/about-us" className="gticc-legal-btn gticc-legal-btn-lg">
-                <i className="fa-solid fa-arrow-left"></i>
-                <span>Back to About GTICC</span>
-              </Link>
+            {/* Accept Button & Return Navigation */}
+            <div className="mt-5 text-center d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3">
+              <button
+                type="button"
+                onClick={handleAcceptPrivacy}
+                className="gticc-legal-btn gticc-legal-btn-lg"
+                style={{ cursor: 'pointer' }}
+              >
+                <i className="fa-solid fa-check"></i>
+                <span>Accept Privacy Policy</span>
+              </button>
+
+              {returnUrl || fromForm ? (
+                <button
+                  type="button"
+                  onClick={() => (returnUrl ? navigate(returnUrl) : navigate(-1))}
+                  className="gticc-legal-btn gticc-legal-btn-lg"
+                  style={{
+                    background: 'transparent',
+                    border: '1.5px solid rgba(200, 162, 74, 0.45)',
+                    color: '#E2E8F0',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <i className="fa-solid fa-arrow-left"></i>
+                  <span>Return to Form</span>
+                </button>
+              ) : (
+                <Link to="/about-us" className="gticc-legal-btn gticc-legal-btn-lg" style={{ background: 'transparent', border: '1.5px solid rgba(200, 162, 74, 0.45)', color: '#E2E8F0' }}>
+                  <i className="fa-solid fa-arrow-left"></i>
+                  <span>Back to About GTICC</span>
+                </Link>
+              )}
             </div>
           </article>
         </div>

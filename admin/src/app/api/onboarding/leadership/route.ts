@@ -150,6 +150,17 @@ export async function POST(req: NextRequest) {
     const id = crypto.randomUUID();
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
 
+    const formatMysqlDate = (isoStr?: string | null) => {
+      if (!isoStr) return new Date().toISOString().slice(0, 19).replace('T', ' ');
+      try {
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return new Date().toISOString().slice(0, 19).replace('T', ' ');
+        return d.toISOString().slice(0, 19).replace('T', ' ');
+      } catch {
+        return new Date().toISOString().slice(0, 19).replace('T', ' ');
+      }
+    };
+
     await execute(
       `INSERT INTO leadership_applications (
         id, full_name, official_email, country_code, mobile_whatsapp,
@@ -157,9 +168,10 @@ export async function POST(req: NextRequest) {
         primary_industry_domain, other_industry_domain, strategic_engagement, geographic_markets,
         linkedin_url, executive_summary, candidate_name, attestation_date, digital_signature,
         attestation_official_email, attestation_check,
+        terms_accepted, privacy_acknowledged, terms_accepted_at, privacy_acknowledged_at, legal_version,
         profile_photo_url, profile_photo_name, professional_cert_url, professional_cert_name,
         status, created_at, updated_at
-      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))`,
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(3),NOW(3))`,
       [
         id,
         data.fullName.trim(),
@@ -182,6 +194,11 @@ export async function POST(req: NextRequest) {
         data.digitalSignature.trim(),
         data.attestationOfficialEmail.toLowerCase().trim(),
         data.attestationCheck ? 1 : 0,
+        data.termsAccepted ? 1 : 0,
+        data.privacyAcknowledged ? 1 : 0,
+        formatMysqlDate(data.termsAcceptedAt),
+        formatMysqlDate(data.privacyAcknowledgedAt),
+        data.legalVersion || 'v1.0-2026',
         data.profilePhotoUrl?.trim() || null,
         data.profilePhotoName?.trim() || null,
         data.professionalCertUrl?.trim() || null,

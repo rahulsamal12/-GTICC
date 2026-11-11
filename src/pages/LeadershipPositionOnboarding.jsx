@@ -23,7 +23,50 @@ export default function LeadershipPositionOnboarding() {
         'GTICC Leadership & Position Screening Questionnaire — Confidential Vetting & Strategic Affiliation Assessment Form.'
       );
     }
+
+    // Restore draft form state if navigating back from legal pages
+    const savedDraft = sessionStorage.getItem('gticc_lpo_draft');
+    if (savedDraft) {
+      try {
+        const parsed = JSON.parse(savedDraft);
+        setFormData((prev) => ({ ...prev, ...parsed }));
+      } catch (err) {
+        console.error('Failed to parse saved LPO draft:', err);
+      }
+    }
+
+    // Check if Terms of Use or Privacy Policy were explicitly accepted on dedicated pages
+    const termsAcceptedFlag = sessionStorage.getItem('gticc_terms_accepted');
+    const termsTimestamp = sessionStorage.getItem('gticc_terms_accepted_at');
+    if (termsAcceptedFlag === 'true') {
+      setFormData((prev) => ({
+        ...prev,
+        termsAccepted: true,
+        termsAcceptedAt: termsTimestamp || prev.termsAcceptedAt || new Date().toISOString(),
+      }));
+      setErrors((prev) => ({ ...prev, termsAccepted: '' }));
+    }
+
+    const privacyAcknowledgedFlag = sessionStorage.getItem('gticc_privacy_acknowledged');
+    const privacyTimestamp = sessionStorage.getItem('gticc_privacy_acknowledged_at');
+    if (privacyAcknowledgedFlag === 'true') {
+      setFormData((prev) => ({
+        ...prev,
+        privacyAcknowledged: true,
+        privacyAcknowledgedAt: privacyTimestamp || prev.privacyAcknowledgedAt || new Date().toISOString(),
+      }));
+      setErrors((prev) => ({ ...prev, privacyAcknowledged: '' }));
+    }
   }, []);
+
+  // Save current form inputs to sessionStorage whenever changed so applicant can navigate freely
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('gticc_lpo_draft', JSON.stringify(formData));
+    } catch {
+      // ignore quota limits
+    }
+  }, [formData]);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -46,6 +89,11 @@ export default function LeadershipPositionOnboarding() {
     digitalSignature: '',
     attestationOfficialEmail: '',
     attestationCheck: false,
+    termsAccepted: false,
+    privacyAcknowledged: false,
+    termsAcceptedAt: '',
+    privacyAcknowledgedAt: '',
+    legalVersion: 'v1.0-2026',
   });
 
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -303,6 +351,14 @@ export default function LeadershipPositionOnboarding() {
       errs.attestationCheck = 'You must confirm the attestation declaration.';
     }
 
+    if (!formData.termsAccepted) {
+      errs.termsAccepted = 'You must read and agree to the GTICC Terms of Use.';
+    }
+
+    if (!formData.privacyAcknowledged) {
+      errs.privacyAcknowledged = 'You must read and acknowledge the GTICC Privacy Policy.';
+    }
+
     setErrors(errs);
     return errs;
   };
@@ -328,6 +384,8 @@ export default function LeadershipPositionOnboarding() {
     digitalSignature: 'lpo-digSig',
     attestationOfficialEmail: 'lpo-attEmail',
     attestationCheck: 'lpo-attestationCheck',
+    termsAccepted: 'lpo-terms-label',
+    privacyAcknowledged: 'lpo-privacy-label',
   };
 
   const handleSubmit = async (e) => {
@@ -1565,6 +1623,80 @@ export default function LeadershipPositionOnboarding() {
                         </span>
                       </label>
                       {errors.attestationCheck && <p className="onboarding-error">{errors.attestationCheck}</p>}
+                    </div>
+
+                    {/* Mandatory Legal Consent Checkbox 1: Terms of Use */}
+                    <div className="col-12 mt-2">
+                      <label id="lpo-terms-label" className="lpo-decl-label">
+                        <input
+                          type="checkbox"
+                          name="termsAccepted"
+                          checked={formData.termsAccepted}
+                          onChange={(e) => {
+                            const val = e.target.checked;
+                            setFormData((prev) => ({
+                              ...prev,
+                              termsAccepted: val,
+                              termsAcceptedAt: val ? (prev.termsAcceptedAt || new Date().toISOString()) : '',
+                            }));
+                            if (errors.termsAccepted) setErrors((prev) => ({ ...prev, termsAccepted: '' }));
+                          }}
+                          required
+                        />
+                        <span>
+                          I have read and agree to the{' '}
+                          <Link
+                            to="/terms-of-use?from=leadership&return=/leadership-onboarding%23lpo-terms-label"
+                            style={{ color: '#D4AF37', textDecoration: 'underline', fontWeight: 600 }}
+                            onClick={() => {
+                              try {
+                                sessionStorage.setItem('gticc_lpo_draft', JSON.stringify(formData));
+                              } catch { /* ignore */ }
+                            }}
+                          >
+                            GTICC Terms of Use
+                          </Link>
+                          .
+                        </span>
+                      </label>
+                      {errors.termsAccepted && <p className="onboarding-error">{errors.termsAccepted}</p>}
+                    </div>
+
+                    {/* Mandatory Legal Consent Checkbox 2: Privacy Policy */}
+                    <div className="col-12 mt-2">
+                      <label id="lpo-privacy-label" className="lpo-decl-label">
+                        <input
+                          type="checkbox"
+                          name="privacyAcknowledged"
+                          checked={formData.privacyAcknowledged}
+                          onChange={(e) => {
+                            const val = e.target.checked;
+                            setFormData((prev) => ({
+                              ...prev,
+                              privacyAcknowledged: val,
+                              privacyAcknowledgedAt: val ? (prev.privacyAcknowledgedAt || new Date().toISOString()) : '',
+                            }));
+                            if (errors.privacyAcknowledged) setErrors((prev) => ({ ...prev, privacyAcknowledged: '' }));
+                          }}
+                          required
+                        />
+                        <span>
+                          I have read and acknowledge the{' '}
+                          <Link
+                            to="/privacy-policy?from=leadership&return=/leadership-onboarding%23lpo-privacy-label"
+                            style={{ color: '#D4AF37', textDecoration: 'underline', fontWeight: 600 }}
+                            onClick={() => {
+                              try {
+                                sessionStorage.setItem('gticc_lpo_draft', JSON.stringify(formData));
+                              } catch { /* ignore */ }
+                            }}
+                          >
+                            GTICC Privacy Policy
+                          </Link>
+                          .
+                        </span>
+                      </label>
+                      {errors.privacyAcknowledged && <p className="onboarding-error">{errors.privacyAcknowledged}</p>}
                     </div>
 
                     <div className="col-12 mt-4">

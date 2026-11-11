@@ -853,6 +853,64 @@ export default function ResponsesPage() {
                             </div>
                           </div>
                         </div>
+
+                        {/* Section 6: Legal Consent & Governance Records */}
+                        <div>
+                          <h4 className="text-xs uppercase font-bold tracking-wider text-[#c8a24a] mb-3 border-b border-slate-800 pb-1.5 flex items-center gap-2">
+                            <span>5. LEGAL CONSENT &amp; GOVERNANCE RECORDS</span>
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-3.5 bg-[#0a1b38] rounded-lg border border-slate-800">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-slate-400 block text-[11px] font-semibold">
+                                  GTICC Terms of Use
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  detailData.application.termsAccepted
+                                    ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60'
+                                    : 'bg-red-950/80 text-red-400 border border-red-800/60'
+                                }`}>
+                                  {detailData.application.termsAccepted ? 'ACCEPTED' : 'PENDING'}
+                                </span>
+                              </div>
+                              <div className="text-xs text-slate-300">
+                                {detailData.application.termsAcceptedAt ? (
+                                  <>Timestamp: <span className="font-mono text-[#c8a24a]">{new Date(detailData.application.termsAcceptedAt).toLocaleString()}</span></>
+                                ) : (
+                                  <span className="text-slate-500 italic">No acceptance record</span>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-slate-400 mt-1">
+                                Applicable version: <span className="font-mono text-slate-300">{detailData.application.legalVersion || 'v1.0-2026'}</span>
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 bg-[#0a1b38] rounded-lg border border-slate-800">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-slate-400 block text-[11px] font-semibold">
+                                  GTICC Privacy Policy
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  detailData.application.privacyAcknowledged
+                                    ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60'
+                                    : 'bg-red-950/80 text-red-400 border border-red-800/60'
+                                }`}>
+                                  {detailData.application.privacyAcknowledged ? 'ACKNOWLEDGED' : 'PENDING'}
+                                </span>
+                              </div>
+                              <div className="text-xs text-slate-300">
+                                {detailData.application.privacyAcknowledgedAt ? (
+                                  <>Timestamp: <span className="font-mono text-[#c8a24a]">{new Date(detailData.application.privacyAcknowledgedAt).toLocaleString()}</span></>
+                                ) : (
+                                  <span className="text-slate-500 italic">No acknowledgment record</span>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-slate-400 mt-1">
+                                Applicable version: <span className="font-mono text-slate-300">{detailData.application.legalVersion || 'v1.0-2026'}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       /* Leadership Position Fields */
@@ -1124,6 +1182,64 @@ export default function ResponsesPage() {
                                   </a>
                                 </div>
                               )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Section 6: Legal Consent & Governance Records */}
+                        <div>
+                          <h4 className="text-xs uppercase font-bold tracking-wider text-[#c8a24a] mb-3 border-b border-slate-800 pb-1.5 flex items-center gap-2">
+                            <span>5. LEGAL CONSENT &amp; GOVERNANCE RECORDS</span>
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-3.5 bg-[#0a1b38] rounded-lg border border-slate-800">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-slate-400 block text-[11px] font-semibold">
+                                  GTICC Terms of Use
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  detailData.application.termsAccepted
+                                    ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60'
+                                    : 'bg-red-950/80 text-red-400 border border-red-800/60'
+                                }`}>
+                                  {detailData.application.termsAccepted ? 'ACCEPTED' : 'PENDING'}
+                                </span>
+                              </div>
+                              <div className="text-xs text-slate-300">
+                                {detailData.application.termsAcceptedAt ? (
+                                  <>Timestamp: <span className="font-mono text-[#c8a24a]">{new Date(detailData.application.termsAcceptedAt).toLocaleString()}</span></>
+                                ) : (
+                                  <span className="text-slate-500 italic">No acceptance record</span>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-slate-400 mt-1">
+                                Applicable version: <span className="font-mono text-slate-300">{detailData.application.legalVersion || 'v1.0-2026'}</span>
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 bg-[#0a1b38] rounded-lg border border-slate-800">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-slate-400 block text-[11px] font-semibold">
+                                  GTICC Privacy Policy
+                                </span>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  detailData.application.privacyAcknowledged
+                                    ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60'
+                                    : 'bg-red-950/80 text-red-400 border border-red-800/60'
+                                }`}>
+                                  {detailData.application.privacyAcknowledged ? 'ACKNOWLEDGED' : 'PENDING'}
+                                </span>
+                              </div>
+                              <div className="text-xs text-slate-300">
+                                {detailData.application.privacyAcknowledgedAt ? (
+                                  <>Timestamp: <span className="font-mono text-[#c8a24a]">{new Date(detailData.application.privacyAcknowledgedAt).toLocaleString()}</span></>
+                                ) : (
+                                  <span className="text-slate-500 italic">No acknowledgment record</span>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-slate-400 mt-1">
+                                Applicable version: <span className="font-mono text-slate-300">{detailData.application.legalVersion || 'v1.0-2026'}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
