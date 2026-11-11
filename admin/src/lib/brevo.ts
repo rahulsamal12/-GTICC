@@ -30,8 +30,8 @@ export interface ApplicationEmailContext {
  */
 export function getBrevoConfig() {
   const apiKey = process.env.BREVO_API_KEY?.trim();
-  const senderEmail = process.env.BREVO_SENDER_EMAIL?.trim();
-  const senderName = process.env.BREVO_SENDER_NAME?.trim() || 'GTICC';
+  const senderEmail = process.env.BREVO_SENDER_EMAIL?.trim() || 'gticcofficial@gmail.com';
+  const senderName = process.env.BREVO_SENDER_NAME?.trim() || 'GTICC – Global Trade & Investment Collaboration Consortium';
 
   if (!apiKey) {
     return { isConfigured: false, error: 'BREVO_API_KEY environment variable is missing.' };

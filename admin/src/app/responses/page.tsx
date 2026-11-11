@@ -1311,11 +1311,26 @@ export default function ResponsesPage() {
                                 <div className="flex items-center gap-2">
                                   {getNotificationBadge(n.status)}
                                   <span className="font-semibold text-white">
-                                    {n.decision} Notification to {n.recipientEmail}
+                                    {n.decision} Notification
                                   </span>
                                 </div>
                                 <span className="text-slate-400">{formatDate(n.createdAt)}</span>
                               </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10.5px] bg-[#050d1a] p-2 rounded border border-slate-800/60">
+                                <div>
+                                  <span className="text-slate-400">Sender: </span>
+                                  <span className="text-[#c8a24a] font-mono">{n.senderEmail || 'gticcofficial@gmail.com'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-slate-400">Recipient: </span>
+                                  <span className="text-white font-mono">{n.recipientEmail}</span>
+                                </div>
+                              </div>
+                              {n.sentAt && (
+                                <div className="text-slate-400 text-[10.5px]">
+                                  Delivered At: <span className="text-emerald-400">{formatDate(n.sentAt)}</span>
+                                </div>
+                              )}
                               {n.messageId && (
                                 <div className="text-slate-400 text-[10.5px]">
                                   Brevo Msg ID: <code className="text-[#c8a24a]">{n.messageId}</code>

@@ -25,7 +25,8 @@ export interface NotificationDispatchResult {
  */
 export async function dispatchApplicationNotification(
   ctx: ApplicationEmailContext,
-  adminEmail: string = 'system'
+  adminEmail: string = 'system',
+  options: { forceRetry?: boolean } = {}
 ): Promise<NotificationDispatchResult> {
   const { applicationId, applicationType, decision, recipientEmail, recipientName } = ctx;
 
@@ -57,26 +58,29 @@ export async function dispatchApplicationNotification(
   }
 
   // 3. Idempotency Check: Did we already send this exact decision email successfully?
-  try {
-    const existingSent = await queryOne<{ id: string; message_id: string }>(
-      `SELECT id, message_id FROM application_notifications
-       WHERE application_id = ? AND decision = ? AND status = 'SENT'
-       LIMIT 1`,
-      [applicationId, decision]
-    );
+  // (Unless explicit retry requested)
+  if (!options.forceRetry) {
+    try {
+      const existingSent = await queryOne<{ id: string; message_id: string }>(
+        `SELECT id, message_id FROM application_notifications
+         WHERE application_id = ? AND decision = ? AND status = 'SENT'
+         LIMIT 1`,
+        [applicationId, decision]
+      );
 
-    if (existingSent) {
-      console.info(`[Notification Skipped] Email for ${applicationId} (${decision}) was already sent (MessageId: ${existingSent.message_id}).`);
-      return {
-        sent: false,
-        skipped: true,
-        status: 'SKIPPED',
-        messageId: existingSent.message_id,
-        reason: 'Duplicate notification prevented — decision email was already sent.',
-      };
+      if (existingSent) {
+        console.info(`[Notification Skipped] Email for ${applicationId} (${decision}) was already sent (MessageId: ${existingSent.message_id}).`);
+        return {
+          sent: false,
+          skipped: true,
+          status: 'SKIPPED',
+          messageId: existingSent.message_id,
+          reason: 'Duplicate notification prevented — decision email was already sent.',
+        };
+      }
+    } catch (err: any) {
+      console.warn('[Notification Warning] Could not check idempotency in application_notifications:', err.message);
     }
-  } catch (err: any) {
-    console.warn('[Notification Warning] Could not check idempotency in application_notifications:', err.message);
   }
 
   // 4. Check Brevo configuration
@@ -174,6 +178,7 @@ async function recordNotification(params: {
   applicationId: string;
   recipientEmail: string;
   recipientName: string;
+  senderEmail?: string;
   decision: string;
   status: 'SENT' | 'FAILED' | 'PENDING';
   messageId?: string;
@@ -181,17 +186,20 @@ async function recordNotification(params: {
   sentAt?: Date;
 }) {
   try {
+    const config = getBrevoConfig();
+    const sender = params.senderEmail || config.senderEmail || 'gticcofficial@gmail.com';
     await execute(
       `INSERT INTO application_notifications
-        (id, application_type, application_id, recipient_email, recipient_name,
+        (id, application_type, application_id, recipient_email, recipient_name, sender_email,
          decision, status, message_id, error_message, sent_at, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(3), NOW(3))`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(3), NOW(3))`,
       [
         params.id,
         params.applicationType,
         params.applicationId,
         params.recipientEmail,
         params.recipientName,
+        sender,
         params.decision,
         params.status,
         params.messageId || null,
@@ -216,6 +224,7 @@ export async function getApplicationNotifications(applicationId: string) {
         application_id   AS applicationId,
         recipient_email  AS recipientEmail,
         recipient_name   AS recipientName,
+        COALESCE(sender_email, 'gticcofficial@gmail.com') AS senderEmail,
         decision,
         status,
         message_id       AS messageId,

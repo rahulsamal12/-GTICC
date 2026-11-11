@@ -94,7 +94,8 @@ export async function POST(
         organizationName,
         feedbackOrNote: note,
       },
-      session.email
+      session.email,
+      { forceRetry: true }
     );
 
     const notifications = await getApplicationNotifications(id);
