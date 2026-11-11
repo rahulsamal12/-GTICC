@@ -14,6 +14,52 @@ const getTodayDate = () => {
 };
 
 export default function LeadershipPositionOnboarding() {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    officialEmail: '',
+    countryCode: '',
+    mobileWhatsApp: '',
+    cityCountry: '',
+    timeZoneGmt: '',
+    currentDesignation: '',
+    organizationFirm: '',
+    website: '',
+    primaryIndustryDomain: '',
+    otherIndustryDomain: '',
+    strategicEngagement: [],
+    geographicMarkets: [],
+    linkedInUrl: '',
+    executiveSummary: '',
+    candidateName: '',
+    attestationDate: getTodayDate(),
+    digitalSignature: '',
+    attestationOfficialEmail: '',
+    attestationCheck: false,
+    termsAccepted: false,
+    privacyAcknowledged: false,
+    termsAcceptedAt: '',
+    privacyAcknowledgedAt: '',
+    legalVersion: 'v1.0-2026',
+  });
+
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState('');
+  const [submissionReference, setSubmissionReference] = useState('');
+  const [isModifyMode, setIsModifyMode] = useState(false);
+  const [updateSuccessMessage, setUpdateSuccessMessage] = useState('');
+  const [errors, setErrors] = useState({});
+
+  // Profile & Supporting Documents state (optional)
+  const [documents, setDocuments] = useState({
+    profilePhoto: null,
+    professionalCert: null,
+  });
+  const [docErrors, setDocErrors] = useState({
+    profilePhoto: '',
+    professionalCert: '',
+  });
+
   useEffect(() => {
     document.title = 'Leadership & Position Screening Questionnaire | GTICC';
     const metaDesc = document.querySelector('meta[name="description"]');
@@ -67,52 +113,6 @@ export default function LeadershipPositionOnboarding() {
       // ignore quota limits
     }
   }, [formData]);
-
-  const [formData, setFormData] = useState({
-    fullName: '',
-    officialEmail: '',
-    countryCode: '',
-    mobileWhatsApp: '',
-    cityCountry: '',
-    timeZoneGmt: '',
-    currentDesignation: '',
-    organizationFirm: '',
-    website: '',
-    primaryIndustryDomain: '',
-    otherIndustryDomain: '',
-    strategicEngagement: [],
-    geographicMarkets: [],
-    linkedInUrl: '',
-    executiveSummary: '',
-    candidateName: '',
-    attestationDate: getTodayDate(),
-    digitalSignature: '',
-    attestationOfficialEmail: '',
-    attestationCheck: false,
-    termsAccepted: false,
-    privacyAcknowledged: false,
-    termsAcceptedAt: '',
-    privacyAcknowledgedAt: '',
-    legalVersion: 'v1.0-2026',
-  });
-
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [serverError, setServerError] = useState('');
-  const [submissionReference, setSubmissionReference] = useState('');
-  const [isModifyMode, setIsModifyMode] = useState(false);
-  const [updateSuccessMessage, setUpdateSuccessMessage] = useState('');
-  const [errors, setErrors] = useState({});
-
-  // Profile & Supporting Documents state (optional)
-  const [documents, setDocuments] = useState({
-    profilePhoto: null,
-    professionalCert: null,
-  });
-  const [docErrors, setDocErrors] = useState({
-    profilePhoto: '',
-    professionalCert: '',
-  });
 
   const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
   const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png'];
