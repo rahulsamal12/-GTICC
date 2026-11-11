@@ -34,14 +34,21 @@ const EVENT_DATA = [
 
 export default function DelegationsEvents() {
   const [expandedCards, setExpandedCards] = useState({});
-  const [currentIndex, setCurrentIndex] = useState(EVENT_DATA.length); // Start at middle set (index 4)
-  const [isTransitioning, setIsTransitioning] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
-  const trackRef = useRef(null);
-  const autoPlayTimerRef = useRef(null);
-  const isNavigatingRef = useRef(false);
+  const totalItems = EVENT_DATA.length;
+  // Duplicate into 3 sets so index can seamlessly step forward and backward indefinitely
+  const displayCards = [...EVENT_DATA, ...EVENT_DATA, ...EVENT_DATA];
 
-  // Touch tracking for swipe support
+  // Start at the middle set
+  const [currentIndex, setCurrentIndex] = useState(totalItems);
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const isTransitioningRef = useRef(false);
+  const autoPlayTimerRef = useRef(null);
+  const resumeTimerRef = useRef(null);
+  const trackRef = useRef(null);
+
+  // Touch tracking
   const touchStartXRef = useRef(0);
   const touchEndXRef = useRef(0);
 
@@ -52,30 +59,23 @@ export default function DelegationsEvents() {
     }));
   };
 
-  // Duplicate data into 3 sets to enable seamless bidirectional infinite looping
-  const displayCards = [...EVENT_DATA, ...EVENT_DATA, ...EVENT_DATA];
-
+  // Move forward by one card
   const handleNext = useCallback(() => {
-    if (isNavigatingRef.current) return;
-    isNavigatingRef.current = true;
-    setIsTransitioning(true);
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+    setTransitionEnabled(true);
     setCurrentIndex((prev) => prev + 1);
-    setTimeout(() => {
-      isNavigatingRef.current = false;
-    }, 450);
   }, []);
 
+  // Move backward by one card
   const handlePrev = useCallback(() => {
-    if (isNavigatingRef.current) return;
-    isNavigatingRef.current = true;
-    setIsTransitioning(true);
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+    setTransitionEnabled(true);
     setCurrentIndex((prev) => prev - 1);
-    setTimeout(() => {
-      isNavigatingRef.current = false;
-    }, 450);
   }, []);
 
-  // Continuous auto-scrolling (4.2 seconds interval for responsive auto-slide)
+  // Continuous auto-scrolling with smooth 2.6s cadence
   useEffect(() => {
     if (isHovered) {
       if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
@@ -83,39 +83,63 @@ export default function DelegationsEvents() {
     }
 
     autoPlayTimerRef.current = setInterval(() => {
-      setIsTransitioning(true);
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-    }, 4200);
+      if (isTransitioningRef.current) return;
+      isTransitioningRef.current = true;
+      setTransitionEnabled(true);
+      setCurrentIndex((prev) => prev + 1);
+    }, 2600);
 
     return () => {
       if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
     };
-  }, [isHovered, currentIndex]);
+  }, [isHovered]);
 
+  // Seamless snap when sliding outside middle set
   const handleTransitionEnd = () => {
-    const totalLength = EVENT_DATA.length;
-    // Slid past the end of the middle set
-    if (currentIndex >= totalLength * 2) {
-      setIsTransitioning(false);
-      setCurrentIndex(currentIndex - totalLength);
-    } 
-    // Slid before the start of the middle set
-    else if (currentIndex < totalLength) {
-      setIsTransitioning(false);
-      setCurrentIndex(currentIndex + totalLength);
+    isTransitioningRef.current = false;
+
+    if (currentIndex >= totalItems * 2) {
+      setTransitionEnabled(false);
+      setCurrentIndex((prev) => prev - totalItems);
+    } else if (currentIndex < totalItems) {
+      setTransitionEnabled(false);
+      setCurrentIndex((prev) => prev + totalItems);
     }
   };
 
-  // Force reflow to instantly snap index without visible transition animation
+  // Re-enable CSS transition on next render frame after silent snap
   useEffect(() => {
-    if (!isTransitioning && trackRef.current) {
+    if (!transitionEnabled && trackRef.current) {
+      // Force reflow to immediately commit position without animation
       // eslint-disable-next-line no-unused-expressions
-      trackRef.current.offsetHeight; 
-      setIsTransitioning(true);
+      trackRef.current.offsetHeight;
+      requestAnimationFrame(() => {
+        setTransitionEnabled(true);
+        isTransitioningRef.current = false;
+      });
     }
-  }, [isTransitioning]);
+  }, [transitionEnabled]);
 
-  // Touch swipe handlers
+  // User manual interaction pauses auto-scroll and resumes smoothly after 3 seconds
+  const pauseAndResumeAfterDelay = useCallback(() => {
+    setIsHovered(true);
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 3000);
+  }, []);
+
+  const onManualNext = () => {
+    handleNext();
+    pauseAndResumeAfterDelay();
+  };
+
+  const onManualPrev = () => {
+    handlePrev();
+    pauseAndResumeAfterDelay();
+  };
+
+  // Touch handlers for mobile swipe
   const handleTouchStart = (e) => {
     touchStartXRef.current = e.touches[0].clientX;
     touchEndXRef.current = e.touches[0].clientX;
@@ -135,10 +159,7 @@ export default function DelegationsEvents() {
         handlePrev();
       }
     }
-    // Resume auto-scrolling shortly after touch interaction
-    setTimeout(() => {
-      setIsHovered(false);
-    }, 1500);
+    pauseAndResumeAfterDelay();
   };
 
   return (
@@ -251,7 +272,7 @@ export default function DelegationsEvents() {
             <button
               type="button"
               className="gticc-carousel-arrow gticc-carousel-arrow-prev"
-              onClick={handlePrev}
+              onClick={onManualPrev}
               aria-label="Previous program"
             >
               <i className="fa-solid fa-chevron-left"></i>
@@ -264,7 +285,7 @@ export default function DelegationsEvents() {
                 className="gticc-carousel-track"
                 style={{
                   transform: `translateX(calc(-${currentIndex} * (var(--card-width) + var(--card-gap))))`,
-                  transition: isTransitioning ? 'transform 0.65s cubic-bezier(0.25, 0.8, 0.25, 1)' : 'none',
+                  transition: transitionEnabled ? 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)' : 'none',
                 }}
                 onTransitionEnd={handleTransitionEnd}
               >
@@ -287,7 +308,7 @@ export default function DelegationsEvents() {
             <button
               type="button"
               className="gticc-carousel-arrow gticc-carousel-arrow-next"
-              onClick={handleNext}
+              onClick={onManualNext}
               aria-label="Next program"
             >
               <i className="fa-solid fa-chevron-right"></i>
