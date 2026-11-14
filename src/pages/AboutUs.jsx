@@ -122,6 +122,165 @@ export default function AboutUs() {
         </div>
       </section>
 
+      {/* ================================= Meet Our Team (Temporary Team Section) */}
+      <section className="gticc-section position-relative" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+        <div className="container">
+          <div className="section-title text-center mb-5">
+            <span className="gticc-section-kicker" style={{ color: '#C8A24A' }}>CONSORTIUM LEADERSHIP & SECRETARIAT</span>
+            <h2 className="title text-white">Meet Our Team</h2>
+            <p className="text-white-50 mx-auto" style={{ maxWidth: '680px', fontSize: '17px', lineHeight: '1.6' }}>
+              The international trade specialists, policy advisors, and cross-border commercial strategists steering GTICC global initiatives.
+            </p>
+          </div>
+
+          <div className="row g-4">
+            {/* Team Member 1 */}
+            <div className="col-lg-3 col-md-6 col-sm-12">
+              <div
+                className="gticc-card h-100 d-flex flex-column text-center"
+                style={{
+                  background: 'rgba(6, 21, 46, 0.45)',
+                  border: '1px solid rgba(200, 162, 74, 0.22)',
+                  borderRadius: '12px',
+                  padding: '24px 20px',
+                  transition: 'all 0.35s ease',
+                }}
+              >
+                <div className="mb-3 mx-auto" style={{ width: '130px', height: '130px', position: 'relative' }}>
+                  <img
+                    src="/images/team/01.webp"
+                    alt="Dr. Marcus Vance"
+                    className="img-fluid rounded-circle"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      border: '2px solid #C8A24A',
+                      boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+                    }}
+                  />
+                </div>
+                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700' }}>Dr. Marcus Vance</h4>
+                <span className="d-block mb-3" style={{ color: '#C8A24A', fontSize: '13.5px', fontWeight: '600', letterSpacing: '0.4px' }}>
+                  Managing Director &amp; Head of Trade
+                </span>
+                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
+                  Leads cross-border trade policy dialogues, bilateral delegation roadshows, and strategic governmental engagements across key global corridors.
+                </p>
+              </div>
+            </div>
+
+            {/* Team Member 2 */}
+            <div className="col-lg-3 col-md-6 col-sm-12">
+              <div
+                className="gticc-card h-100 d-flex flex-column text-center"
+                style={{
+                  background: 'rgba(6, 21, 46, 0.45)',
+                  border: '1px solid rgba(200, 162, 74, 0.22)',
+                  borderRadius: '12px',
+                  padding: '24px 20px',
+                  transition: 'all 0.35s ease',
+                }}
+              >
+                <div className="mb-3 mx-auto" style={{ width: '130px', height: '130px', position: 'relative' }}>
+                  <img
+                    src="/images/team/02.webp"
+                    alt="Elena Rostova"
+                    className="img-fluid rounded-circle"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      border: '2px solid #C8A24A',
+                      boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+                    }}
+                  />
+                </div>
+                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700' }}>Elena Rostova</h4>
+                <span className="d-block mb-3" style={{ color: '#C8A24A', fontSize: '13.5px', fontWeight: '600', letterSpacing: '0.4px' }}>
+                  VP, Capital Markets &amp; Inward Investment
+                </span>
+                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
+                  Spearheads international sovereign fund linkages, private equity syndication, and cross-border infrastructure financing mechanisms.
+                </p>
+              </div>
+            </div>
+
+            {/* Team Member 3 */}
+            <div className="col-lg-3 col-md-6 col-sm-12">
+              <div
+                className="gticc-card h-100 d-flex flex-column text-center"
+                style={{
+                  background: 'rgba(6, 21, 46, 0.45)',
+                  border: '1px solid rgba(200, 162, 74, 0.22)',
+                  borderRadius: '12px',
+                  padding: '24px 20px',
+                  transition: 'all 0.35s ease',
+                }}
+              >
+                <div className="mb-3 mx-auto" style={{ width: '130px', height: '130px', position: 'relative' }}>
+                  <img
+                    src="/images/team/03.webp"
+                    alt="Simmy Flavius"
+                    className="img-fluid rounded-circle"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      border: '2px solid #C8A24A',
+                      boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+                    }}
+                  />
+                </div>
+                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700' }}>Simmy Flavius</h4>
+                <span className="d-block mb-3" style={{ color: '#C8A24A', fontSize: '13.5px', fontWeight: '600', letterSpacing: '0.4px' }}>
+                  Director of Global Partnerships
+                </span>
+                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
+                  Oversees multilateral institutional partnerships, commercial chamber collaborations, and bilateral consortium expansion.
+                </p>
+              </div>
+            </div>
+
+            {/* Team Member 4 */}
+            <div className="col-lg-3 col-md-6 col-sm-12">
+              <div
+                className="gticc-card h-100 d-flex flex-column text-center"
+                style={{
+                  background: 'rgba(6, 21, 46, 0.45)',
+                  border: '1px solid rgba(200, 162, 74, 0.22)',
+                  borderRadius: '12px',
+                  padding: '24px 20px',
+                  transition: 'all 0.35s ease',
+                }}
+              >
+                <div className="mb-3 mx-auto" style={{ width: '130px', height: '130px', position: 'relative' }}>
+                  <img
+                    src="/images/team/04.webp"
+                    alt="Simon Cyrene"
+                    className="img-fluid rounded-circle"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      border: '2px solid #C8A24A',
+                      boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
+                    }}
+                  />
+                </div>
+                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700' }}>Simon Cyrene</h4>
+                <span className="d-block mb-3" style={{ color: '#C8A24A', fontSize: '13.5px', fontWeight: '600', letterSpacing: '0.4px' }}>
+                  Head of Commercial Operations
+                </span>
+                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
+                  Coordinates delegation logistics, project execution verification, and end-to-end commercial trade mission follow-through.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ================================= What GTICC Is / Is Not */}
       <section className="gticc-section bg-panel gticc-about-definition-section">
         <div className="container">
