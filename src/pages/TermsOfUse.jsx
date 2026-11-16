@@ -15,7 +15,13 @@ export default function TermsOfUse() {
 
   const handleAcceptTerms = () => {
     const timestamp = new Date().toISOString();
-    // Record explicit acceptance in sessionStorage
+    // Record explicit acceptance in sessionStorage scoped for each form context
+    const keySuffix = fromForm === 'leadership' ? '_leadership' : fromForm === 'business' ? '_business' : '';
+    if (keySuffix) {
+      sessionStorage.setItem(`gticc_terms_accepted${keySuffix}`, 'true');
+      sessionStorage.setItem(`gticc_terms_accepted_at${keySuffix}`, timestamp);
+    }
+    // Also set base keys for backward-compatibility
     sessionStorage.setItem('gticc_terms_accepted', 'true');
     sessionStorage.setItem('gticc_terms_accepted_at', timestamp);
 
@@ -327,7 +333,7 @@ export default function TermsOfUse() {
                 style={{ cursor: 'pointer' }}
               >
                 <i className="fa-solid fa-check"></i>
-                <span>Accept Terms &amp; Conditions</span>
+                <span>Accept Terms of Use</span>
               </button>
 
               {returnUrl || fromForm ? (

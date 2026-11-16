@@ -75,15 +75,26 @@ export default function BusinessMembershipOnboarding() {
     if (savedDraft) {
       try {
         const parsed = JSON.parse(savedDraft);
-        setFormData((prev) => ({ ...prev, ...parsed }));
+        // Do not blindly restore true for legal acceptance unless confirmed by explicit session acceptance
+        const termsExplicit = sessionStorage.getItem('gticc_terms_accepted_business') === 'true' || sessionStorage.getItem('gticc_terms_accepted') === 'true';
+        const privacyExplicit = sessionStorage.getItem('gticc_privacy_acknowledged_business') === 'true' || sessionStorage.getItem('gticc_privacy_acknowledged') === 'true';
+
+        setFormData((prev) => ({
+          ...prev,
+          ...parsed,
+          termsAccepted: termsExplicit ? Boolean(parsed.termsAccepted) : false,
+          termsAcceptedAt: termsExplicit ? (parsed.termsAcceptedAt || '') : '',
+          privacyAcknowledged: privacyExplicit ? Boolean(parsed.privacyAcknowledged) : false,
+          privacyAcknowledgedAt: privacyExplicit ? (parsed.privacyAcknowledgedAt || '') : '',
+        }));
       } catch (err) {
         console.error('Failed to parse saved BMO draft:', err);
       }
     }
 
     // Check if Terms of Use or Privacy Policy were explicitly accepted on dedicated pages
-    const termsAcceptedFlag = sessionStorage.getItem('gticc_terms_accepted');
-    const termsTimestamp = sessionStorage.getItem('gticc_terms_accepted_at');
+    const termsAcceptedFlag = sessionStorage.getItem('gticc_terms_accepted_business') || sessionStorage.getItem('gticc_terms_accepted');
+    const termsTimestamp = sessionStorage.getItem('gticc_terms_accepted_at_business') || sessionStorage.getItem('gticc_terms_accepted_at');
     if (termsAcceptedFlag === 'true') {
       setFormData((prev) => ({
         ...prev,
@@ -93,8 +104,8 @@ export default function BusinessMembershipOnboarding() {
       setErrors((prev) => ({ ...prev, termsAccepted: '' }));
     }
 
-    const privacyAcknowledgedFlag = sessionStorage.getItem('gticc_privacy_acknowledged');
-    const privacyTimestamp = sessionStorage.getItem('gticc_privacy_acknowledged_at');
+    const privacyAcknowledgedFlag = sessionStorage.getItem('gticc_privacy_acknowledged_business') || sessionStorage.getItem('gticc_privacy_acknowledged');
+    const privacyTimestamp = sessionStorage.getItem('gticc_privacy_acknowledged_at_business') || sessionStorage.getItem('gticc_privacy_acknowledged_at');
     if (privacyAcknowledgedFlag === 'true') {
       setFormData((prev) => ({
         ...prev,
@@ -441,6 +452,20 @@ export default function BusinessMembershipOnboarding() {
 
         setSubmissionReference(refId);
         setFormSubmitted(true);
+        // Clear draft and legal acceptance flags from sessionStorage on successful submission
+        try {
+          sessionStorage.removeItem('gticc_bmo_draft');
+          sessionStorage.removeItem('gticc_terms_accepted_business');
+          sessionStorage.removeItem('gticc_terms_accepted_at_business');
+          sessionStorage.removeItem('gticc_privacy_acknowledged_business');
+          sessionStorage.removeItem('gticc_privacy_acknowledged_at_business');
+          sessionStorage.removeItem('gticc_terms_accepted');
+          sessionStorage.removeItem('gticc_terms_accepted_at');
+          sessionStorage.removeItem('gticc_privacy_acknowledged');
+          sessionStorage.removeItem('gticc_privacy_acknowledged_at');
+        } catch {
+          // ignore storage clearing issues
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (err) {
         console.error('Failed to persist business application to backend:', err);
@@ -1652,25 +1677,30 @@ export default function BusinessMembershipOnboarding() {
 
                     {/* Mandatory Legal Consent Checkbox 1: Terms of Use */}
                     <div className="col-12 mt-2">
-                      <label id="bmo-terms-label" className="onboarding-decl-label">
+                      <label id="bmo-terms-label" className="onboarding-decl-label" style={{ cursor: 'pointer' }}>
                         <input
                           type="checkbox"
                           name="termsAccepted"
                           checked={formData.termsAccepted}
-                          onChange={(e) => {
-                            const val = e.target.checked;
-                            setFormData((prev) => ({
-                              ...prev,
-                              termsAccepted: val,
-                              termsAcceptedAt: val ? (prev.termsAcceptedAt || new Date().toISOString()) : '',
-                            }));
-                            if (errors.termsAccepted) setErrors((prev) => ({ ...prev, termsAccepted: '' }));
+                          onChange={() => {}} // Disabled direct manual checking; must be accepted via legal page
+                          onClick={(e) => {
+                            if (!formData.termsAccepted) {
+                              e.preventDefault();
+                              const termsLink = document.getElementById('bmo-terms-link');
+                              if (termsLink) termsLink.focus();
+                              setErrors((prev) => ({
+                                ...prev,
+                                termsAccepted: 'Please click the "GTICC Terms of Use" link to open, review, and click "Accept Terms of Use".',
+                              }));
+                            }
                           }}
                           required
+                          style={{ cursor: formData.termsAccepted ? 'default' : 'pointer' }}
                         />
                         <span>
                           I have read and agree to the{' '}
                           <Link
+                            id="bmo-terms-link"
                             to="/terms-of-use?from=business&return=/business-onboarding%23bmo-terms-label"
                             style={{ color: '#D4AF37', textDecoration: 'underline', fontWeight: 600 }}
                             onClick={() => {
@@ -1689,25 +1719,30 @@ export default function BusinessMembershipOnboarding() {
 
                     {/* Mandatory Legal Consent Checkbox 2: Privacy Policy */}
                     <div className="col-12 mt-2">
-                      <label id="bmo-privacy-label" className="onboarding-decl-label">
+                      <label id="bmo-privacy-label" className="onboarding-decl-label" style={{ cursor: 'pointer' }}>
                         <input
                           type="checkbox"
                           name="privacyAcknowledged"
                           checked={formData.privacyAcknowledged}
-                          onChange={(e) => {
-                            const val = e.target.checked;
-                            setFormData((prev) => ({
-                              ...prev,
-                              privacyAcknowledged: val,
-                              privacyAcknowledgedAt: val ? (prev.privacyAcknowledgedAt || new Date().toISOString()) : '',
-                            }));
-                            if (errors.privacyAcknowledged) setErrors((prev) => ({ ...prev, privacyAcknowledged: '' }));
+                          onChange={() => {}} // Disabled direct manual checking; must be accepted via legal page
+                          onClick={(e) => {
+                            if (!formData.privacyAcknowledged) {
+                              e.preventDefault();
+                              const privacyLink = document.getElementById('bmo-privacy-link');
+                              if (privacyLink) privacyLink.focus();
+                              setErrors((prev) => ({
+                                ...prev,
+                                privacyAcknowledged: 'Please click the "GTICC Privacy Policy" link to open, review, and click "Accept Privacy Policy".',
+                              }));
+                            }
                           }}
                           required
+                          style={{ cursor: formData.privacyAcknowledged ? 'default' : 'pointer' }}
                         />
                         <span>
                           I have read and acknowledge the{' '}
                           <Link
+                            id="bmo-privacy-link"
                             to="/privacy-policy?from=business&return=/business-onboarding%23bmo-privacy-label"
                             style={{ color: '#D4AF37', textDecoration: 'underline', fontWeight: 600 }}
                             onClick={() => {

@@ -15,7 +15,13 @@ export default function PrivacyPolicy() {
 
   const handleAcceptPrivacy = () => {
     const timestamp = new Date().toISOString();
-    // Record explicit acknowledgment in sessionStorage
+    // Record explicit acknowledgment in sessionStorage scoped for each form context
+    const keySuffix = fromForm === 'leadership' ? '_leadership' : fromForm === 'business' ? '_business' : '';
+    if (keySuffix) {
+      sessionStorage.setItem(`gticc_privacy_acknowledged${keySuffix}`, 'true');
+      sessionStorage.setItem(`gticc_privacy_acknowledged_at${keySuffix}`, timestamp);
+    }
+    // Also set base keys for backward-compatibility
     sessionStorage.setItem('gticc_privacy_acknowledged', 'true');
     sessionStorage.setItem('gticc_privacy_acknowledged_at', timestamp);
 
