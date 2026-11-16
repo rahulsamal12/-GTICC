@@ -3,9 +3,9 @@ import type { PoolConnection } from 'mysql2/promise';
 import { execute, queryOne } from './db';
 
 /**
- * Parses "City, Country" or returns defaults.
+ * Parses "City, Country" or returns defaults using countryCode fallback if needed.
  */
-export function parseHqLocation(hq?: string | null): { city: string; country: string } {
+export function parseHqLocation(hq?: string | null, countryCode?: string | null): { city: string; country: string } {
   if (!hq) return { city: 'Global', country: 'Global' };
   const parts = hq.split(',').map((p) => p.trim());
   if (parts.length >= 2) {
@@ -13,7 +13,27 @@ export function parseHqLocation(hq?: string | null): { city: string; country: st
     const country = parts.slice(1).join(', ') || 'Global';
     return { city, country };
   }
-  return { city: hq, country: hq };
+
+  // If single value (e.g. "Bhubaneswar" or "Toronto")
+  const city = hq.trim();
+  let country = city;
+  if (countryCode) {
+    const codeMap: Record<string, string> = {
+      '+91': 'India',
+      '+1': 'Canada / USA',
+      '+44': 'United Kingdom',
+      '+971': 'United Arab Emirates',
+      '+41': 'Switzerland',
+      '+49': 'Germany',
+      '+46': 'Sweden',
+      '+61': 'Australia',
+      '+65': 'Singapore',
+    };
+    if (codeMap[countryCode]) {
+      country = codeMap[countryCode];
+    }
+  }
+  return { city, country };
 }
 
 /**
@@ -100,7 +120,7 @@ export async function syncBusinessApplicationToDirectory(
   }
 
   // Application IS ACCEPTED -> map fields
-  const { city, country } = parseHqLocation(app.hq_city_country);
+  const { city, country } = parseHqLocation(app.hq_city_country, app.country_code);
   const orgName = (app.legal_entity_name || 'Enterprise Member').trim();
   const memberName = (app.rep_full_name || app.auth_officer_name || 'Executive Representative').trim();
   const designation = (app.corporate_title || app.auth_corporate_title || 'Corporate Director').trim();
