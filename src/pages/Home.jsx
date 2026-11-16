@@ -108,9 +108,14 @@ export default function Home() {
         slidesPerView: 1,
         spaceBetween: 30,
         autoplay: {
-          delay: 3000,
+          delay: 4200,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
+        },
+        speed: 800,
+        navigation: {
+          prevEl: '.features-swiper-button-prev',
+          nextEl: '.features-swiper-button-next',
         },
         breakpoints: {
           576: { slidesPerView: 2 },
@@ -121,22 +126,26 @@ export default function Home() {
 
       corridorSwiper = new window.Swiper('.corridor-swiper', {
         loop: true,
-        slidesPerView: 'auto',
-        centeredSlides: true,
-        spaceBetween: 16,
+        slidesPerView: 1,
+        spaceBetween: 24,
         autoplay: {
-          delay: 9000,
+          delay: 4200,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         },
-        speed: 1000,
+        speed: 800,
+        navigation: {
+          prevEl: '.corridor-swiper-button-prev',
+          nextEl: '.corridor-swiper-button-next',
+        },
         pagination: {
           el: '.corridor-swiper-pagination',
           clickable: true,
         },
         breakpoints: {
-          768: { slidesPerView: 2, spaceBetween: 30, centeredSlides: false },
-          1024: { slidesPerView: 3, spaceBetween: 30, centeredSlides: false },
+          576: { slidesPerView: 1, spaceBetween: 24 },
+          768: { slidesPerView: 2, spaceBetween: 28 },
+          1024: { slidesPerView: 3, spaceBetween: 30 },
         }
       });
     }
@@ -154,6 +163,86 @@ export default function Home() {
   return (
     <div className="site-content gticc-home-page">
       <style>{`
+        /* Corridor & Features Swiper Navigation Arrows */
+        .gticc-home-carousel-wrapper {
+          position: relative;
+          width: 100%;
+          padding: 0 54px;
+        }
+
+        .gticc-home-carousel-arrow {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 46px;
+          height: 46px;
+          border-radius: 50%;
+          background: #0B1728;
+          border: 1.5px solid #C8A24A;
+          color: #D4AF37;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 20;
+          transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+          outline: none;
+          padding: 0;
+        }
+
+        .gticc-home-carousel-arrow:hover {
+          background: #C8A24A;
+          color: #071322;
+          border-color: #D4AF37;
+          transform: translateY(-50%) scale(1.08);
+          box-shadow: 0 8px 24px rgba(200, 162, 74, 0.4);
+        }
+
+        .gticc-home-carousel-arrow:active {
+          transform: translateY(-50%) scale(0.96);
+        }
+
+        .gticc-home-carousel-arrow i {
+          font-size: 18px;
+          line-height: 1;
+          pointer-events: none;
+        }
+
+        .gticc-home-carousel-arrow-prev {
+          left: 0;
+        }
+
+        .gticc-home-carousel-arrow-next {
+          right: 0;
+        }
+
+        @media (max-width: 991px) {
+          .gticc-home-carousel-wrapper {
+            padding: 0 46px;
+          }
+          .gticc-home-carousel-arrow {
+            width: 40px;
+            height: 40px;
+          }
+          .gticc-home-carousel-arrow i {
+            font-size: 15px;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .gticc-home-carousel-wrapper {
+            padding: 0 38px;
+          }
+          .gticc-home-carousel-arrow {
+            width: 36px;
+            height: 36px;
+          }
+          .gticc-home-carousel-arrow i {
+            font-size: 14px;
+          }
+        }
+
         /* Corridor Swiper Pagination Custom Styling */
         .corridor-swiper-pagination {
           display: flex;
@@ -620,28 +709,49 @@ export default function Home() {
                 GTICC supports structured collaboration across priority markets, helping stakeholders explore introductions, visibility, delegation participation, and sector dialogue.
               </p>
             </div>
-            <div className="swiper corridor-swiper mb-4" style={{ padding: '20px 0', overflow: 'hidden' }}>
-              <div className="swiper-wrapper">
-                {[
-                  ['/Toronto.webp', 'Canada', 'Canada-based platform for international trade, investment, and collaboration pathways.'],
-                  ['/images/Image%205.webp', 'India', 'Business, institutional, diaspora, and sector collaboration between India and global partners.'],
-                  ['/UAE.webp', 'UAE', 'Gateway for forums, investment dialogue, delegation activity, and regional market visibility.'],
-                  ['/uk.webp', 'United Kingdom', 'UK corridor access for trade, investment, delegations, and structured international collaboration.', 'gticc-home-corridor-card-bright'],
-                  ['/singapore.webp', 'Singapore', 'Southeast Asia hub gateway, facilitating trade, investment access, and regional sector cooperation.']
-                ].map(([image, title, copy, extraClass = '']) => (
-                  <div className="swiper-slide" key={title} style={{ height: 'auto' }}>
-                    <article className={`gticc-image-card gticc-home-corridor-card corridor-card region-card gticc-float-hover ${extraClass}`} style={{ height: '100%' }}>
-                      <div className="corridor-card-image region-card-image">
-                        <img src={image} alt={`${title} corridor visual`} loading="lazy" />
-                      </div>
-                      <div className="gticc-image-card-content">
-                        <h3>{title}</h3>
-                        <p>{copy}</p>
-                      </div>
-                    </article>
-                  </div>
-                ))}
+            {/* Carousel with Navigation Arrows */}
+            <div className="gticc-home-carousel-wrapper">
+              {/* Left Navigation Arrow */}
+              <button
+                type="button"
+                className="gticc-home-carousel-arrow gticc-home-carousel-arrow-prev corridor-swiper-button-prev"
+                aria-label="Previous corridor"
+              >
+                <i className="fa-solid fa-chevron-left"></i>
+              </button>
+
+              <div className="swiper corridor-swiper mb-4" style={{ padding: '20px 0', overflow: 'hidden' }}>
+                <div className="swiper-wrapper">
+                  {[
+                    ['/Toronto.webp', 'Canada', 'Canada-based platform for international trade, investment, and collaboration pathways.'],
+                    ['/images/Image%205.webp', 'India', 'Business, institutional, diaspora, and sector collaboration between India and global partners.'],
+                    ['/UAE.webp', 'UAE', 'Gateway for forums, investment dialogue, delegation activity, and regional market visibility.'],
+                    ['/uk.webp', 'United Kingdom', 'UK corridor access for trade, investment, delegations, and structured international collaboration.', 'gticc-home-corridor-card-bright'],
+                    ['/singapore.webp', 'Singapore', 'Southeast Asia hub gateway, facilitating trade, investment access, and regional sector cooperation.']
+                  ].map(([image, title, copy, extraClass = '']) => (
+                    <div className="swiper-slide" key={title} style={{ height: 'auto' }}>
+                      <article className={`gticc-image-card gticc-home-corridor-card corridor-card region-card gticc-float-hover ${extraClass}`} style={{ height: '100%' }}>
+                        <div className="corridor-card-image region-card-image">
+                          <img src={image} alt={`${title} corridor visual`} loading="lazy" />
+                        </div>
+                        <div className="gticc-image-card-content">
+                          <h3>{title}</h3>
+                          <p>{copy}</p>
+                        </div>
+                      </article>
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              {/* Right Navigation Arrow */}
+              <button
+                type="button"
+                className="gticc-home-carousel-arrow gticc-home-carousel-arrow-next corridor-swiper-button-next"
+                aria-label="Next corridor"
+              >
+                <i className="fa-solid fa-chevron-right"></i>
+              </button>
             </div>
             <div className="corridor-swiper-pagination"></div>
             <div className="gticc-card text-center mt-4" style={{ background: 'rgba(8, 22, 48, 0.4)', border: '1px solid rgba(200, 162, 74, 0.2)', padding: '20px' }}>
@@ -661,62 +771,83 @@ export default function Home() {
                   <span className="gticc-section-kicker text-primary">CORE STRATEGY</span>
                   <h2 className="title">Core Pillars of Global Impact</h2>
                 </div>
-                <div className="swiper features-swiper mb-4 mb-sm-5" style={{ padding: '15px' }}>
-                  <div className="swiper-wrapper">
-                    <div className="swiper-slide">
-                      <Link to="/services/trade-investment-bridging" className="w-100 text-decoration-none d-block h-100">
-                        <motion.div className="infobox h-100" whileHover={shouldReduceMotion ? undefined : { y: -8 }} transition={{ duration: 0.35, ease: easeOut }}>
-                          <div className="infobox-info">
-                            <h5 className="infobox-title mb-0">Trade & Investment Bridging</h5>
-                          </div>
-                          <div className="infobox-content">
-                            <div className="infobox-description responsive-lead-text">Connecting stakeholders to convert international interest into real relationships and execution momentum.</div>
-                          </div>
-                          <div className="infobox-footer">
-                            <span className="gticc-learn-more-link">
-                              Learn More <span className="arrow-symbol">→</span>
-                            </span>
-                          </div>
-                        </motion.div>
-                      </Link>
-                    </div>
+                {/* Core Pillars Carousel with Navigation Arrows */}
+                <div className="gticc-home-carousel-wrapper">
+                  {/* Left Navigation Arrow */}
+                  <button
+                    type="button"
+                    className="gticc-home-carousel-arrow gticc-home-carousel-arrow-prev features-swiper-button-prev"
+                    aria-label="Previous pillar"
+                  >
+                    <i className="fa-solid fa-chevron-left"></i>
+                  </button>
 
-                    <div className="swiper-slide">
-                      <Link to="/services/delegations" className="w-100 text-decoration-none d-block h-100">
-                        <motion.div className="infobox h-100" whileHover={shouldReduceMotion ? undefined : { y: -8 }} transition={{ duration: 0.35, ease: easeOut }}>
-                          <div className="infobox-info">
-                            <h5 className="infobox-title mb-0">Delegations & Market Access</h5>
-                          </div>
-                          <div className="infobox-content">
-                            <div className="infobox-description responsive-lead-text">Curated trade missions and international delegations designed for high-level commercial outcomes.</div>
-                          </div>
-                          <div className="infobox-footer">
-                            <span className="gticc-learn-more-link">
-                              Learn More <span className="arrow-symbol">→</span>
-                            </span>
-                          </div>
-                        </motion.div>
-                      </Link>
-                    </div>
+                  <div className="swiper features-swiper mb-4 mb-sm-5" style={{ padding: '15px' }}>
+                    <div className="swiper-wrapper">
+                      <div className="swiper-slide">
+                        <Link to="/services/trade-investment-bridging" className="w-100 text-decoration-none d-block h-100">
+                          <motion.div className="infobox h-100" whileHover={shouldReduceMotion ? undefined : { y: -8 }} transition={{ duration: 0.35, ease: easeOut }}>
+                            <div className="infobox-info">
+                              <h5 className="infobox-title mb-0">Trade & Investment Bridging</h5>
+                            </div>
+                            <div className="infobox-content">
+                              <div className="infobox-description responsive-lead-text">Connecting stakeholders to convert international interest into real relationships and execution momentum.</div>
+                            </div>
+                            <div className="infobox-footer">
+                              <span className="gticc-learn-more-link">
+                                Learn More <span className="arrow-symbol">→</span>
+                              </span>
+                            </div>
+                          </motion.div>
+                        </Link>
+                      </div>
 
-                    <div className="swiper-slide">
-                      <Link to="/membership" className="w-100 text-decoration-none d-block h-100">
-                        <motion.div className="infobox h-100" whileHover={shouldReduceMotion ? undefined : { y: -8 }} transition={{ duration: 0.35, ease: easeOut }}>
-                          <div className="infobox-info">
-                            <h5 className="infobox-title mb-0">Membership & Strategic Network</h5>
-                          </div>
-                          <div className="infobox-content">
-                            <div className="infobox-description responsive-lead-text">Exclusive gateway to a global network of governments, institutions, and private-sector partners.</div>
-                          </div>
-                          <div className="infobox-footer">
-                            <span className="gticc-learn-more-link">
-                              Learn More <span className="arrow-symbol">→</span>
-                            </span>
-                          </div>
-                        </motion.div>
-                      </Link>
+                      <div className="swiper-slide">
+                        <Link to="/services/delegations" className="w-100 text-decoration-none d-block h-100">
+                          <motion.div className="infobox h-100" whileHover={shouldReduceMotion ? undefined : { y: -8 }} transition={{ duration: 0.35, ease: easeOut }}>
+                            <div className="infobox-info">
+                              <h5 className="infobox-title mb-0">Delegations & Market Access</h5>
+                            </div>
+                            <div className="infobox-content">
+                              <div className="infobox-description responsive-lead-text">Curated trade missions and international delegations designed for high-level commercial outcomes.</div>
+                            </div>
+                            <div className="infobox-footer">
+                              <span className="gticc-learn-more-link">
+                                Learn More <span className="arrow-symbol">→</span>
+                              </span>
+                            </div>
+                          </motion.div>
+                        </Link>
+                      </div>
+
+                      <div className="swiper-slide">
+                        <Link to="/membership" className="w-100 text-decoration-none d-block h-100">
+                          <motion.div className="infobox h-100" whileHover={shouldReduceMotion ? undefined : { y: -8 }} transition={{ duration: 0.35, ease: easeOut }}>
+                            <div className="infobox-info">
+                              <h5 className="infobox-title mb-0">Membership & Strategic Network</h5>
+                            </div>
+                            <div className="infobox-content">
+                              <div className="infobox-description responsive-lead-text">Exclusive gateway to a global network of governments, institutions, and private-sector partners.</div>
+                            </div>
+                            <div className="infobox-footer">
+                              <span className="gticc-learn-more-link">
+                                Learn More <span className="arrow-symbol">→</span>
+                              </span>
+                            </div>
+                          </motion.div>
+                        </Link>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Right Navigation Arrow */}
+                  <button
+                    type="button"
+                    className="gticc-home-carousel-arrow gticc-home-carousel-arrow-next features-swiper-button-next"
+                    aria-label="Next pillar"
+                  >
+                    <i className="fa-solid fa-chevron-right"></i>
+                  </button>
                 </div>
                 <div className="gticc-card gticc-facilitator-note mt-4">
                   <p className="mb-0 responsive-lead-text">
