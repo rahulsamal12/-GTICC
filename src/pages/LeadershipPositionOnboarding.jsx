@@ -75,17 +75,13 @@ export default function LeadershipPositionOnboarding() {
     if (savedDraft) {
       try {
         const parsed = JSON.parse(savedDraft);
-        // Do not blindly restore true for legal acceptance unless confirmed by explicit session acceptance
-        const termsExplicit = sessionStorage.getItem('gticc_terms_accepted_leadership') === 'true' || sessionStorage.getItem('gticc_terms_accepted') === 'true';
-        const privacyExplicit = sessionStorage.getItem('gticc_privacy_acknowledged_leadership') === 'true' || sessionStorage.getItem('gticc_privacy_acknowledged') === 'true';
-
         setFormData((prev) => ({
           ...prev,
           ...parsed,
-          termsAccepted: termsExplicit ? Boolean(parsed.termsAccepted) : false,
-          termsAcceptedAt: termsExplicit ? (parsed.termsAcceptedAt || '') : '',
-          privacyAcknowledged: privacyExplicit ? Boolean(parsed.privacyAcknowledged) : false,
-          privacyAcknowledgedAt: privacyExplicit ? (parsed.privacyAcknowledgedAt || '') : '',
+          termsAccepted: Boolean(parsed.termsAccepted),
+          termsAcceptedAt: parsed.termsAcceptedAt || '',
+          privacyAcknowledged: Boolean(parsed.privacyAcknowledged),
+          privacyAcknowledgedAt: parsed.privacyAcknowledgedAt || '',
         }));
       } catch (err) {
         console.error('Failed to parse saved LPO draft:', err);
@@ -1657,20 +1653,19 @@ export default function LeadershipPositionOnboarding() {
                           type="checkbox"
                           name="termsAccepted"
                           checked={formData.termsAccepted}
-                          onChange={() => {}} // Disabled direct manual checking; must be accepted via legal page
-                          onClick={(e) => {
-                            if (!formData.termsAccepted) {
-                              e.preventDefault();
-                              const termsLink = document.getElementById('lpo-terms-link');
-                              if (termsLink) termsLink.focus();
-                              setErrors((prev) => ({
-                                ...prev,
-                                termsAccepted: 'Please click the "GTICC Terms of Use" link to open, review, and click "Accept Terms of Use".',
-                              }));
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setFormData((prev) => ({
+                              ...prev,
+                              termsAccepted: checked,
+                              termsAcceptedAt: checked ? (prev.termsAcceptedAt || new Date().toISOString()) : '',
+                            }));
+                            if (checked) {
+                              setErrors((prev) => ({ ...prev, termsAccepted: '' }));
                             }
                           }}
                           required
-                          style={{ cursor: formData.termsAccepted ? 'default' : 'pointer' }}
+                          style={{ cursor: 'pointer' }}
                         />
                         <span>
                           I have read and agree to the{' '}
@@ -1699,20 +1694,19 @@ export default function LeadershipPositionOnboarding() {
                           type="checkbox"
                           name="privacyAcknowledged"
                           checked={formData.privacyAcknowledged}
-                          onChange={() => {}} // Disabled direct manual checking; must be accepted via legal page
-                          onClick={(e) => {
-                            if (!formData.privacyAcknowledged) {
-                              e.preventDefault();
-                              const privacyLink = document.getElementById('lpo-privacy-link');
-                              if (privacyLink) privacyLink.focus();
-                              setErrors((prev) => ({
-                                ...prev,
-                                privacyAcknowledged: 'Please click the "GTICC Privacy Policy" link to open, review, and click "Accept Privacy Policy".',
-                              }));
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setFormData((prev) => ({
+                              ...prev,
+                              privacyAcknowledged: checked,
+                              privacyAcknowledgedAt: checked ? (prev.privacyAcknowledgedAt || new Date().toISOString()) : '',
+                            }));
+                            if (checked) {
+                              setErrors((prev) => ({ ...prev, privacyAcknowledged: '' }));
                             }
                           }}
                           required
-                          style={{ cursor: formData.privacyAcknowledged ? 'default' : 'pointer' }}
+                          style={{ cursor: 'pointer' }}
                         />
                         <span>
                           I have read and acknowledge the{' '}
