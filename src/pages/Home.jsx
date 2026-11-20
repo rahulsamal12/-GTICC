@@ -104,7 +104,7 @@ export default function Home() {
 
     if (window.Swiper) {
       featuresSwiper = new window.Swiper('.features-swiper', {
-        loop: true,
+        loop: false,
         slidesPerView: 1,
         spaceBetween: 30,
         autoplay: {
