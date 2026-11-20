@@ -14,6 +14,7 @@ export default function MemberDirectory() {
   }, []);
 
   // Filter States
+  const [searchTerm, setSearchTerm] = useState('');
   const [country, setCountry] = useState('All');
   const [city, setCity] = useState('All');
   const [sector, setSector] = useState('All');
@@ -91,6 +92,7 @@ export default function MemberDirectory() {
 
   // Reset Filters
   const handleResetFilters = () => {
+    setSearchTerm('');
     setCountry('All');
     setCity('All');
     setSector('All');
@@ -103,6 +105,17 @@ export default function MemberDirectory() {
   // Filter Logic
   const filteredMembers = useMemo(() => {
     return membersList.filter(member => {
+      if (searchTerm.trim()) {
+        const q = searchTerm.toLowerCase().trim();
+        const matchesSearch =
+          member.orgName.toLowerCase().includes(q) ||
+          member.memberName.toLowerCase().includes(q) ||
+          member.sector.toLowerCase().includes(q) ||
+          member.city.toLowerCase().includes(q) ||
+          member.country.toLowerCase().includes(q) ||
+          member.description.toLowerCase().includes(q);
+        if (!matchesSearch) return false;
+      }
       if (country !== 'All' && member.country !== country) return false;
       if (city !== 'All' && member.city !== city) return false;
       if (sector !== 'All' && member.sector !== sector) return false;
@@ -112,7 +125,7 @@ export default function MemberDirectory() {
       if (interest !== 'All' && !member.interests.toLowerCase().includes(interest.toLowerCase())) return false;
       return true;
     });
-  }, [country, city, sector, tier, orgType, service, interest]);
+  }, [searchTerm, country, city, sector, tier, orgType, service, interest, membersList]);
 
   return (
     <div className="site-content gticc-member-directory-page">
@@ -259,9 +272,54 @@ export default function MemberDirectory() {
       <section className="space-ptb gticc-section" style={{ backgroundImage: 'linear-gradient(rgba(8, 22, 48, 0.9), rgba(8, 22, 48, 0.9)), url("/bg10.webp")', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
         <div className="container">
           
-          {/* 7 Dropdown Filters */}
+          {/* Search Bar & 7 Dropdown Filters */}
           <div className="gticc-filter-panel">
             <div className="row g-3">
+              {/* Search Bar */}
+              <div className="col-12 mb-2">
+                <label className="filter-label">Search Directory Members</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by business name, executive, sector, city, or keywords..."
+                    className="filter-select"
+                    style={{ paddingLeft: '40px' }}
+                  />
+                  <i
+                    className="fa-solid fa-magnifying-glass"
+                    style={{
+                      position: 'absolute',
+                      left: '14px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#C8A24A',
+                      fontSize: '15px',
+                    }}
+                  ></i>
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchTerm('')}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#a4b0be',
+                        cursor: 'pointer',
+                      }}
+                      title="Clear search"
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div className="col-lg-3 col-md-6 col-sm-6">
                 <label className="filter-label">Country</label>
                 <select className="filter-select" value={country} onChange={(e) => setCountry(e.target.value)}>
