@@ -44,71 +44,61 @@ export async function PATCH(
       [id, id]
     );
 
-    if (!member) {
-      // Check if it's an accepted application that hasn't been synced to members yet
-      const app = await queryOne<any>(
-        'SELECT id, legal_entity_name, status, directory_visible FROM business_applications WHERE id = ?',
-        [id]
-      );
+    const targetAppId = member?.application_id || id;
+    const directoryVisibleVal = visible ? 1 : 0;
 
-      if (!app) {
-        return NextResponse.json({ error: 'Member directory record or application not found.' }, { status: 404 });
-      }
+    // Check if there is a linked business application
+    const app = await queryOne<any>(
+      'SELECT id, legal_entity_name, status, directory_visible FROM business_applications WHERE id = ?',
+      [targetAppId]
+    );
 
+    if (app) {
       if ((app.status || '').toUpperCase() !== 'ACCEPTED') {
         return NextResponse.json(
           { error: `Cannot toggle directory visibility for application with status '${app.status}'. Only ACCEPTED applications can be shown in the directory.` },
-          { status: 400 }
+          { status: 400, headers: corsHeaders(req) }
         );
       }
 
       // Update business_applications directory_visible
-      await execute('UPDATE business_applications SET directory_visible = ?, updated_at = NOW(3) WHERE id = ?', [visible ? 1 : 0, app.id]);
+      await execute(
+        'UPDATE business_applications SET directory_visible = ?, updated_at = NOW(3) WHERE id = ?',
+        [directoryVisibleVal, app.id]
+      );
+    }
+
+    if (member) {
+      // Update members directory_visible
+      await execute(
+        'UPDATE members SET directory_visible = ?, is_active = ?, updated_at = NOW(3) WHERE id = ?',
+        [directoryVisibleVal, visible ? 1 : 0, member.id]
+      );
+    }
+
+    // Always ensure business application is synced into members table
+    if (app && (app.status || '').toUpperCase() === 'ACCEPTED') {
       await syncBusinessApplicationToDirectory(app.id);
-
-      const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
-      await logAuditEvent({
-        adminId: session.id,
-        adminEmail: session.email,
-        action: 'UPDATE_DIRECTORY_VISIBILITY',
-        entityType: 'member_directory',
-        entityId: app.id,
-        details: `Directory visibility for ${app.legal_entity_name} set to ${visible ? 'VISIBLE' : 'HIDDEN'}`,
-        ipAddress: ip,
-      });
-
-      return NextResponse.json({
-        success: true,
-        visible,
-        message: `Member listing visibility set to ${visible ? 'Visible' : 'Hidden'} in public directory.`,
-      });
     }
 
-    // Update both members and business_applications if linked
-    const directoryVisibleVal = visible ? 1 : 0;
-    await execute('UPDATE members SET directory_visible = ?, updated_at = NOW(3) WHERE id = ?', [directoryVisibleVal, member.id]);
-
-    if (member.application_id) {
-      await execute('UPDATE business_applications SET directory_visible = ?, updated_at = NOW(3) WHERE id = ?', [directoryVisibleVal, member.application_id]);
-    }
-
+    const orgDisplayName = app?.legal_entity_name || member?.org_name || 'Member';
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
     await logAuditEvent({
       adminId: session.id,
       adminEmail: session.email,
       action: 'UPDATE_DIRECTORY_VISIBILITY',
       entityType: 'member_directory',
-      entityId: member.id,
-      details: `Directory visibility for ${member.org_name} set to ${visible ? 'VISIBLE' : 'HIDDEN'}`,
+      entityId: id,
+      details: `Directory visibility for ${orgDisplayName} set to ${visible ? 'VISIBLE' : 'HIDDEN'}`,
       ipAddress: ip,
     });
 
     return NextResponse.json({
       success: true,
-      memberId: member.id,
       visible,
+      directoryVisible: directoryVisibleVal,
       message: `Member listing visibility set to ${visible ? 'Visible' : 'Hidden'} in public directory.`,
-    });
+    }, { headers: corsHeaders(req) });
   } catch (error: any) {
     console.error('Update directory visibility error:', error);
     return NextResponse.json(

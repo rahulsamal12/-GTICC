@@ -55,7 +55,7 @@ export default function ResponsesPage() {
     type: 'success' | 'warning' | 'error';
     text: string;
   } | null>(null);
-  const [publishing, setPublishing] = useState(false);
+  const [togglingVisibility, setTogglingVisibility] = useState(false);
 
   // Retry notification mutation
   const retryEmailMutation = useMutation({
@@ -529,93 +529,62 @@ export default function ResponsesPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        {/* Save & Publish to Directory button if Accepted business application */}
-                        {activeTab === 'business' && detailData.application.status === 'ACCEPTED' && (
-                          <button
-                            type="button"
-                            disabled={publishing}
-                            onClick={async () => {
-                              setPublishing(true);
-                              try {
-                                const res = await fetch(`/api/applications/business/${selectedId}/publish`, {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                });
-                                const data = await res.json();
-                                if (!res.ok) {
-                                  throw new Error(data.error || 'Failed to save and publish to directory.');
-                                }
-                                queryClient.invalidateQueries({ queryKey: ['submissionDetail'] });
-                                queryClient.invalidateQueries({ queryKey: ['responses'] });
-                                setActionResultBanner({
-                                  type: 'success',
-                                  text: data.message || 'Successfully saved and published to public Member Directory.',
-                                });
-                              } catch (e: any) {
-                                setActionResultBanner({
-                                  type: 'error',
-                                  text: e.message || 'Failed to save and publish application to directory.',
-                                });
-                              } finally {
-                                setPublishing(false);
-                              }
-                            }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer bg-gradient-to-r from-[#c8a24a] to-[#b38e3a] hover:from-[#d8b25a] hover:to-[#c8a24a] text-black border-[#c8a24a] shadow-sm disabled:opacity-50"
-                          >
-                            <Send size={13} className={publishing ? 'animate-spin' : ''} />
-                            <span>{publishing ? 'Publishing...' : 'Save & Publish to Directory'}</span>
-                          </button>
-                        )}
-
                         {/* Directory Show/Hide button if Accepted business application */}
-                        {activeTab === 'business' && detailData.application.status === 'ACCEPTED' && (
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              const cur = detailData.application.directoryVisible !== 0;
-                              try {
-                                const res = await fetch(`/api/member-directory/${selectedId}`, {
-                                  method: 'PATCH',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ visible: !cur }),
-                                });
-                                const data = await res.json();
-                                if (res.ok) {
-                                  queryClient.invalidateQueries({ queryKey: ['submissionDetail'] });
-                                  queryClient.invalidateQueries({ queryKey: ['responses'] });
-                                  setActionResultBanner({
-                                    type: 'success',
-                                    text: data.message || `Member listing visibility updated to ${!cur ? 'Visible' : 'Hidden'} in public directory.`,
+                        {activeTab === 'business' && detailData.application.status === 'ACCEPTED' && (() => {
+                          const isCurrentlyVisible = Number(detailData.application.directoryVisible) === 1;
+                          return (
+                            <button
+                              type="button"
+                              disabled={togglingVisibility}
+                              onClick={async () => {
+                                setTogglingVisibility(true);
+                                try {
+                                  const targetVisible = !isCurrentlyVisible;
+                                  const res = await fetch(`/api/member-directory/${selectedId}`, {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ visible: targetVisible }),
                                   });
-                                } else {
-                                  throw new Error(data.error || 'Failed to update directory visibility.');
+                                  const data = await res.json();
+                                  if (res.ok) {
+                                    queryClient.invalidateQueries({ queryKey: ['submissionDetail'] });
+                                    queryClient.invalidateQueries({ queryKey: ['responses'] });
+                                    setActionResultBanner({
+                                      type: 'success',
+                                      text: data.message || `Member listing visibility updated to ${targetVisible ? 'Visible' : 'Hidden'} in public directory.`,
+                                    });
+                                  } else {
+                                    throw new Error(data.error || 'Failed to update directory visibility.');
+                                  }
+                                } catch (e: any) {
+                                  setActionResultBanner({
+                                    type: 'error',
+                                    text: e.message || 'Failed to update visibility',
+                                  });
+                                } finally {
+                                  setTogglingVisibility(false);
                                 }
-                              } catch (e: any) {
-                                setActionResultBanner({
-                                  type: 'error',
-                                  text: e.message || 'Failed to update visibility',
-                                });
-                              }
-                            }}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer ${
-                              detailData.application.directoryVisible !== 0
-                                ? 'bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border-amber-700/50'
-                                : 'bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-700/50'
-                            }`}
-                          >
-                            {detailData.application.directoryVisible !== 0 ? (
-                              <>
-                                <EyeOff size={13} />
-                                <span>Hide from Directory</span>
-                              </>
-                            ) : (
-                              <>
-                                <Eye size={13} />
-                                <span>Show in Directory</span>
-                              </>
-                            )}
-                          </button>
-                        )}
+                              }}
+                              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer disabled:opacity-50 ${
+                                isCurrentlyVisible
+                                  ? 'bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border-amber-700/50'
+                                  : 'bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-700/50'
+                              }`}
+                            >
+                              {isCurrentlyVisible ? (
+                                <>
+                                  <EyeOff size={13} className={togglingVisibility ? 'animate-spin' : ''} />
+                                  <span>{togglingVisibility ? 'Updating...' : 'Hide from Directory'}</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Eye size={13} className={togglingVisibility ? 'animate-spin' : ''} />
+                                  <span>{togglingVisibility ? 'Updating...' : 'Show in Directory'}</span>
+                                </>
+                              )}
+                            </button>
+                          );
+                        })()}
 
                         {/* Only allow decisions if application is PENDING. Final decisions are permanent & read-only */}
                         {detailData.application.status === 'PENDING' ? (
