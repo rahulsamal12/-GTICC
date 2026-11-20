@@ -134,6 +134,9 @@ export async function syncBusinessApplicationToDirectory(
   const logo = app.profile_photo_url || '/gticc_logo_new.webp';
   const directoryVisibleVal = isVisible ? 1 : 0;
 
+  const isPublished = app.is_published === 1 || app.is_published === true;
+  const isPublishedVal = isPublished ? 1 : 0;
+
   if (existingMember) {
     // Update existing member record
     const updateSql = `
@@ -155,6 +158,8 @@ export async function syncBusinessApplicationToDirectory(
         website = ?,
         is_active = 1,
         directory_visible = ?,
+        is_published = ?,
+        published_at = COALESCE(published_at, NOW(3)),
         updated_at = NOW(3)
       WHERE id = ?
     `;
@@ -175,6 +180,7 @@ export async function syncBusinessApplicationToDirectory(
       description,
       website,
       directoryVisibleVal,
+      isPublishedVal,
       existingMember.id,
     ];
 
@@ -193,9 +199,9 @@ export async function syncBusinessApplicationToDirectory(
         id, application_id, org_name, logo, member_name, designation,
         country, city, sector, tier, annual_turnover, org_type, exim_status,
         services, interests, description, website, linkedin,
-        show_public_contact, is_active, directory_visible,
-        verified_at, created_at, updated_at
-      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,?,NOW(3),NOW(3),NOW(3))
+        show_public_contact, is_active, directory_visible, is_published,
+        published_at, verified_at, created_at, updated_at
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,NOW(3),NOW(3),NOW(3),NOW(3))
     `;
     const params = [
       newMemberId,
@@ -218,6 +224,7 @@ export async function syncBusinessApplicationToDirectory(
       null, // linkedin
       1,    // show_public_contact
       directoryVisibleVal,
+      isPublishedVal,
     ];
 
     if (conn) {

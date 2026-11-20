@@ -86,7 +86,9 @@ export async function GET(req: NextRequest) {
         direct_phone          AS directPhone,
         primary_industry_sector AS primaryIndustrySector,
         UPPER(status)         AS status,
-        COALESCE(directory_visible, 1) AS directoryVisible,
+        COALESCE(directory_visible, 0) AS directoryVisible,
+        COALESCE(is_published, 0)      AS isPublished,
+        published_at          AS publishedAt,
         created_at            AS createdAt,
         reviewed_by           AS reviewedBy,
         reviewed_at           AS reviewedAt

@@ -55,6 +55,7 @@ export default function ResponsesPage() {
     type: 'success' | 'warning' | 'error';
     text: string;
   } | null>(null);
+  const [publishing, setPublishing] = useState(false);
 
   // Retry notification mutation
   const retryEmailMutation = useMutation({
@@ -528,6 +529,44 @@ export default function ResponsesPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
+                        {/* Save & Publish to Directory button if Accepted business application */}
+                        {activeTab === 'business' && detailData.application.status === 'ACCEPTED' && (
+                          <button
+                            type="button"
+                            disabled={publishing}
+                            onClick={async () => {
+                              setPublishing(true);
+                              try {
+                                const res = await fetch(`/api/applications/business/${selectedId}/publish`, {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                });
+                                const data = await res.json();
+                                if (!res.ok) {
+                                  throw new Error(data.error || 'Failed to save and publish to directory.');
+                                }
+                                queryClient.invalidateQueries({ queryKey: ['submissionDetail'] });
+                                queryClient.invalidateQueries({ queryKey: ['responses'] });
+                                setActionResultBanner({
+                                  type: 'success',
+                                  text: data.message || 'Successfully saved and published to public Member Directory.',
+                                });
+                              } catch (e: any) {
+                                setActionResultBanner({
+                                  type: 'error',
+                                  text: e.message || 'Failed to save and publish application to directory.',
+                                });
+                              } finally {
+                                setPublishing(false);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer bg-gradient-to-r from-[#c8a24a] to-[#b38e3a] hover:from-[#d8b25a] hover:to-[#c8a24a] text-black border-[#c8a24a] shadow-sm disabled:opacity-50"
+                          >
+                            <Send size={13} className={publishing ? 'animate-spin' : ''} />
+                            <span>{publishing ? 'Publishing...' : 'Save & Publish to Directory'}</span>
+                          </button>
+                        )}
+
                         {/* Directory Show/Hide button if Accepted business application */}
                         {activeTab === 'business' && detailData.application.status === 'ACCEPTED' && (
                           <button
@@ -540,16 +579,22 @@ export default function ResponsesPage() {
                                   headers: { 'Content-Type': 'application/json' },
                                   body: JSON.stringify({ visible: !cur }),
                                 });
+                                const data = await res.json();
                                 if (res.ok) {
                                   queryClient.invalidateQueries({ queryKey: ['submissionDetail'] });
                                   queryClient.invalidateQueries({ queryKey: ['responses'] });
                                   setActionResultBanner({
                                     type: 'success',
-                                    text: `Member listing visibility updated to ${!cur ? 'Visible' : 'Hidden'} in public directory.`,
+                                    text: data.message || `Member listing visibility updated to ${!cur ? 'Visible' : 'Hidden'} in public directory.`,
                                   });
+                                } else {
+                                  throw new Error(data.error || 'Failed to update directory visibility.');
                                 }
                               } catch (e: any) {
-                                alert(e.message || 'Failed to update visibility');
+                                setActionResultBanner({
+                                  type: 'error',
+                                  text: e.message || 'Failed to update visibility',
+                                });
                               }
                             }}
                             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer ${

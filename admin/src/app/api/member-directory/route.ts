@@ -38,8 +38,8 @@ export async function GET(req: NextRequest) {
     const conditions: string[] = [
       'm.is_active = 1',
       'm.directory_visible = 1',
-      '(ba.status IS NULL OR UPPER(ba.status) = "ACCEPTED")',
-      '(ba.directory_visible IS NULL OR ba.directory_visible = 1)',
+      'm.is_published = 1',
+      '(ba.id IS NULL OR (UPPER(ba.status) = "ACCEPTED" AND ba.is_published = 1 AND ba.directory_visible = 1))',
     ];
     const params: string[] = [];
 
