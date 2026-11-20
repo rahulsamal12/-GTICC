@@ -427,18 +427,8 @@ export default function PrivacyPolicy() {
               </p>
             </div>
 
-            {/* Accept Button & Return Navigation */}
-            <div className="mt-5 text-center d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3">
-              <button
-                type="button"
-                onClick={handleAcceptPrivacy}
-                className="gticc-legal-btn gticc-legal-btn-lg"
-                style={{ cursor: 'pointer' }}
-              >
-                <i className="fa-solid fa-check"></i>
-                <span>Accept Privacy Policy</span>
-              </button>
-
+            {/* Return Navigation */}
+            <div className="mt-5 text-center d-flex justify-content-center align-items-center">
               {returnUrl || fromForm ? (
                 <button
                   type="button"
@@ -452,7 +442,7 @@ export default function PrivacyPolicy() {
                   }}
                 >
                   <i className="fa-solid fa-arrow-left"></i>
-                  <span>Return to Form</span>
+                  <span>Return to {formLabel}</span>
                 </button>
               ) : (
                 <Link to="/about-us" className="gticc-legal-btn gticc-legal-btn-lg" style={{ background: 'transparent', border: '1.5px solid rgba(200, 162, 74, 0.45)', color: '#E2E8F0' }}>
