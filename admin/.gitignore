@@ -47,3 +47,7 @@ backups/
 .mysql_credential
 *.sql.bak
 *.dat
+
+# Uploaded user documents / attachments
+public/uploads/*
+!public/uploads/.gitkeep
