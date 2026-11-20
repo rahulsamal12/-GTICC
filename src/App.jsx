@@ -55,6 +55,8 @@ export default function App() {
           <Route path="terms-of-use" element={<TermsOfUse />} />
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="contact-us" element={<ContactUs />} />
+          <Route path="member-directory" element={<Navigate to="/membership/member-directory" replace />} />
+          <Route path="members-directory" element={<Navigate to="/membership/member-directory" replace />} />
           
           {/* Membership Nested Routes */}
           <Route path="membership">

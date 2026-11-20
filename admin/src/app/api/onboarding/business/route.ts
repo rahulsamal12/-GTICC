@@ -227,6 +227,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         referenceId: id,
+        applicationId: id,
         message: 'Your Business Membership Onboarding application has been securely recorded.',
       },
       { status: 201, headers: corsHeaders(req) }
