@@ -140,7 +140,7 @@ export default function Footer() {
                 &copy; {new Date().getFullYear()} GTICC. All Rights Reserved.
                 <span className="mx-2">•</span>
                 <a
-                  href="http://localhost:3001/login"
+                  href="http://localhost:3000/login"
                   target="_blank"
                   rel="noreferrer"
                   style={{ color: '#C8A24A', fontSize: '13px', textDecoration: 'none', fontWeight: 600 }}

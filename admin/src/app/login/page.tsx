@@ -1,20 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import { ShieldCheck, Lock, Mail, ArrowRight, AlertCircle, Building2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { user, loading: authLoading, checkAuth } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // If already logged in, redirect to /responses
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace('/responses');
+    }
+  }, [authLoading, user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setSubmitting(true);
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -28,11 +37,13 @@ export default function LoginPage() {
         throw new Error(data.error || 'Failed to authenticate');
       }
 
-      router.push('/responses');
+      // Update auth context state
+      await checkAuth();
+      router.replace('/responses');
     } catch (err: any) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -97,10 +108,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={submitting}
               className="w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-[#c8a24a] to-[#b38e3a] hover:from-[#d8b25a] hover:to-[#c8a24a] font-semibold text-black text-sm tracking-wide shadow-lg shadow-[#c8a24a]/20 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              {loading ? (
+              {submitting ? (
                 'Verifying Credentials...'
               ) : (
                 <>

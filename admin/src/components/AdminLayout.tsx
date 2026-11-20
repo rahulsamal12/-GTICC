@@ -1,18 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import {
   FileCheck,
   Building2,
-  Award,
   LogOut,
   ChevronRight,
   Menu,
   X,
   Globe2,
-  ShieldCheck,
   MailQuestion,
 } from 'lucide-react';
 
@@ -22,30 +21,8 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
-  const router = useRouter();
+  const { user, loading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/auth/me')
-      .then((res) => {
-        if (!res.ok) throw new Error('Unauthenticated');
-        return res.json();
-      })
-      .then((data) => {
-        setCurrentUser(data.user);
-        setLoading(false);
-      })
-      .catch(() => {
-        router.push('/login');
-      });
-  }, [router]);
-
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
-  };
 
   const navItems = [
     { label: 'Onboarding Responses', href: '/responses', icon: FileCheck },
@@ -62,6 +39,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
       </div>
     );
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
@@ -122,11 +103,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* User Card */}
         <div className="mx-4 my-4 p-3 rounded-xl bg-[#0c2248] border border-[#c8a24a]/20 flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-[#183a73] border border-[#c8a24a]/40 flex items-center justify-center font-bold text-xs text-[#c8a24a] shrink-0">
-            {currentUser?.name?.substring(0, 2).toUpperCase() || 'AD'}
+            {user?.name?.substring(0, 2).toUpperCase() || 'AD'}
           </div>
           <div className="overflow-hidden min-w-0">
-            <p className="text-xs font-semibold text-white truncate">{currentUser?.name || 'Administrator'}</p>
-            <p className="text-[10px] text-slate-400 capitalize truncate">{currentUser?.role?.replace('_', ' ') || 'Master Admin'}</p>
+            <p className="text-xs font-semibold text-white truncate">{user?.name || 'Administrator'}</p>
+            <p className="text-[10px] text-slate-400 capitalize truncate">{user?.role?.replace('_', ' ') || 'Master Admin'}</p>
           </div>
         </div>
 
@@ -166,7 +147,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <span>Open Public Website</span>
           </a>
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-950/40 border border-transparent hover:border-red-900/40 transition-colors cursor-pointer"
           >
             <LogOut size={16} />
