@@ -135,18 +135,20 @@ export default function AboutUs() {
 
           <div className="row g-4 justify-content-center">
             {/* Team Member 1: Surya Venkata Naga Bhagavan Chelluboyina (Murthy) */}
-            <div className="col-lg-5 col-md-6 col-sm-12">
+            <div className="col-xl-4 col-lg-5 col-md-6 col-sm-10">
               <div
-                className="gticc-card h-100 d-flex flex-column text-center"
+                className="gticc-card h-100 d-flex flex-column text-center mx-auto"
                 style={{
-                  background: 'rgba(6, 21, 46, 0.45)',
-                  border: '1px solid rgba(200, 162, 74, 0.22)',
-                  borderRadius: '12px',
-                  padding: '28px 24px',
+                  maxWidth: '420px',
+                  background: 'rgba(6, 21, 46, 0.55)',
+                  border: '1px solid rgba(200, 162, 74, 0.28)',
+                  borderRadius: '16px',
+                  padding: '32px 26px',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35)',
                   transition: 'all 0.35s ease',
                 }}
               >
-                <div className="mb-3 mx-auto" style={{ width: '150px', height: '150px', position: 'relative' }}>
+                <div className="mb-3 mx-auto" style={{ width: '135px', height: '135px', position: 'relative' }}>
                   <img
                     src="/Surya Vnkata Naga Bhagavan Chelluboyina(Murthy).jpeg"
                     alt="Surya Venkata Naga Bhagavan Chelluboyina (Murthy)"
@@ -161,34 +163,47 @@ export default function AboutUs() {
                     }}
                   />
                 </div>
-                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <h4
+                  className="text-white mb-2"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    lineHeight: '1.35',
+                    minHeight: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   Surya Venkata Naga Bhagavan Chelluboyina (Murthy)
                 </h4>
-                <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14.5px', fontWeight: '700', letterSpacing: '0.4px' }}>
+                <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14px', fontWeight: '700', letterSpacing: '0.4px' }}>
                   Founder Director
                 </span>
-                <span className="d-block mb-3 text-white-50" style={{ fontSize: '13.5px', fontWeight: '500' }}>
+                <span className="d-block mb-3 text-white-50" style={{ fontSize: '13px', fontWeight: '500' }}>
                   New Delhi, India (Chair)
                 </span>
-                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
+                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.65', flexGrow: 1 }}>
                   Founder Director at Unique Global Exim Trade Corporation, driving global bilateral commerce, cross-border supply chain operations, and international export-import market origination.
                 </p>
               </div>
             </div>
 
             {/* Team Member 2: Sir John Martin Thomas */}
-            <div className="col-lg-5 col-md-6 col-sm-12">
+            <div className="col-xl-4 col-lg-5 col-md-6 col-sm-10">
               <div
-                className="gticc-card h-100 d-flex flex-column text-center"
+                className="gticc-card h-100 d-flex flex-column text-center mx-auto"
                 style={{
-                  background: 'rgba(6, 21, 46, 0.45)',
-                  border: '1px solid rgba(200, 162, 74, 0.22)',
-                  borderRadius: '12px',
-                  padding: '28px 24px',
+                  maxWidth: '420px',
+                  background: 'rgba(6, 21, 46, 0.55)',
+                  border: '1px solid rgba(200, 162, 74, 0.28)',
+                  borderRadius: '16px',
+                  padding: '32px 26px',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35)',
                   transition: 'all 0.35s ease',
                 }}
               >
-                <div className="mb-3 mx-auto" style={{ width: '150px', height: '150px', position: 'relative' }}>
+                <div className="mb-3 mx-auto" style={{ width: '135px', height: '135px', position: 'relative' }}>
                   <img
                     src="/sir John Thomas Martin.jpeg"
                     alt="Sir John Martin Thomas"
@@ -203,16 +218,27 @@ export default function AboutUs() {
                     }}
                   />
                 </div>
-                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <h4
+                  className="text-white mb-2"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    lineHeight: '1.35',
+                    minHeight: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   Sir John Martin Thomas
                 </h4>
-                <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14.5px', fontWeight: '700', letterSpacing: '0.4px' }}>
+                <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14px', fontWeight: '700', letterSpacing: '0.4px' }}>
                   President
                 </span>
-                <span className="d-block mb-3 text-white-50" style={{ fontSize: '13.5px', fontWeight: '500' }}>
+                <span className="d-block mb-3 text-white-50" style={{ fontSize: '13px', fontWeight: '500' }}>
                   Italy (Chair)
                 </span>
-                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
+                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.65', flexGrow: 1 }}>
                   President of Swiss Family Investors Circle, New Delhi, leading institutional capital engagement, sovereign family office syndications, and bilateral investment collaboration between European and Asian financial ecosystems.
                 </p>
               </div>
@@ -234,18 +260,20 @@ export default function AboutUs() {
 
           <div className="row g-4 justify-content-center">
             {/* Team Member: Sachin Dev */}
-            <div className="col-lg-5 col-md-8 col-sm-12">
+            <div className="col-xl-4 col-lg-5 col-md-6 col-sm-10">
               <div
-                className="gticc-card h-100 d-flex flex-column text-center"
+                className="gticc-card h-100 d-flex flex-column text-center mx-auto"
                 style={{
-                  background: 'rgba(6, 21, 46, 0.45)',
-                  border: '1px solid rgba(200, 162, 74, 0.22)',
-                  borderRadius: '12px',
-                  padding: '28px 24px',
+                  maxWidth: '420px',
+                  background: 'rgba(6, 21, 46, 0.55)',
+                  border: '1px solid rgba(200, 162, 74, 0.28)',
+                  borderRadius: '16px',
+                  padding: '32px 26px',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35)',
                   transition: 'all 0.35s ease',
                 }}
               >
-                <div className="mb-3 mx-auto" style={{ width: '150px', height: '150px', position: 'relative' }}>
+                <div className="mb-3 mx-auto" style={{ width: '135px', height: '135px', position: 'relative' }}>
                   <img
                     src="/Sachin Dev.jpeg"
                     alt="Sachin Dev"
@@ -260,16 +288,27 @@ export default function AboutUs() {
                     }}
                   />
                 </div>
-                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <h4
+                  className="text-white mb-2"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    lineHeight: '1.35',
+                    minHeight: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   Sachin Dev
                 </h4>
-                <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14.5px', fontWeight: '700', letterSpacing: '0.4px' }}>
+                <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14px', fontWeight: '700', letterSpacing: '0.4px' }}>
                   Solicitor GTICC
                 </span>
-                <span className="d-block mb-3 text-white-50" style={{ fontSize: '13.5px', fontWeight: '500' }}>
+                <span className="d-block mb-3 text-white-50" style={{ fontSize: '13px', fontWeight: '500' }}>
                   The Global Trade and Investment Collaboration Consortium (GTICC)
                 </span>
-                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
+                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.65', flexGrow: 1 }}>
                   Barrister and Solicitor in Ontario, Canada, and Founder of DA Law Group with over 20 years of professional experience. Renowned for strategic expertise in corporate law, mergers &amp; acquisitions, corporate governance, regulatory compliance, and cross-border commercial business advisory.
                 </p>
               </div>
