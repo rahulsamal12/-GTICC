@@ -168,7 +168,7 @@ export default function AboutUs() {
                   Founder Director
                 </span>
                 <span className="d-block mb-3 text-white-50" style={{ fontSize: '13.5px', fontWeight: '500' }}>
-                  Unique Global Exim Trade Corporation
+                  New Delhi, India (Chair)
                 </span>
                 <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
                   Founder Director at Unique Global Exim Trade Corporation, driving global bilateral commerce, cross-border supply chain operations, and international export-import market origination.
@@ -210,7 +210,7 @@ export default function AboutUs() {
                   President
                 </span>
                 <span className="d-block mb-3 text-white-50" style={{ fontSize: '13.5px', fontWeight: '500' }}>
-                  Swiss Family Investors Circle, New Delhi
+                  Italy (Chair)
                 </span>
                 <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
                   President of Swiss Family Investors Circle, New Delhi, leading institutional capital engagement, sovereign family office syndications, and bilateral investment collaboration between European and Asian financial ecosystems.
@@ -264,7 +264,7 @@ export default function AboutUs() {
                   Sachin Dev
                 </h4>
                 <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14.5px', fontWeight: '700', letterSpacing: '0.4px' }}>
-                  Executive Member
+                  Solicitor GTICC
                 </span>
                 <span className="d-block mb-3 text-white-50" style={{ fontSize: '13.5px', fontWeight: '500' }}>
                   The Global Trade and Investment Collaboration Consortium (GTICC)
