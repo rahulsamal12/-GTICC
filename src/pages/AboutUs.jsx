@@ -122,12 +122,12 @@ export default function AboutUs() {
         </div>
       </section>
 
-      {/* ================================= Meet Our Team (Leadership & Executive Members) */}
+      {/* ================================= Meet the Team (Leadership & Executive Members) */}
       <section className="gticc-section position-relative" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
         <div className="container">
           <div className="section-title text-center mb-5">
             <span className="gticc-section-kicker" style={{ color: '#C8A24A' }}>CONSORTIUM LEADERSHIP &amp; SECRETARIAT</span>
-            <h2 className="title text-white">Meet Our Team</h2>
+            <h2 className="title text-white">Meet the Team</h2>
             <p className="text-white-50 mx-auto" style={{ maxWidth: '720px', fontSize: '17px', lineHeight: '1.6' }}>
               The international trade specialists, legal advisors, and cross-border commercial leaders steering GTICC global initiatives and strategic collaboration.
             </p>
@@ -135,7 +135,7 @@ export default function AboutUs() {
 
           <div className="row g-4 justify-content-center">
             {/* Team Member 1: Surya Venkata Naga Bhagavan Chelluboyina (Murthy) */}
-            <div className="col-lg-4 col-md-6 col-sm-12">
+            <div className="col-lg-5 col-md-6 col-sm-12">
               <div
                 className="gticc-card h-100 d-flex flex-column text-center"
                 style={{
@@ -176,50 +176,8 @@ export default function AboutUs() {
               </div>
             </div>
 
-            {/* Team Member 2: Sachin Dev */}
-            <div className="col-lg-4 col-md-6 col-sm-12">
-              <div
-                className="gticc-card h-100 d-flex flex-column text-center"
-                style={{
-                  background: 'rgba(6, 21, 46, 0.45)',
-                  border: '1px solid rgba(200, 162, 74, 0.22)',
-                  borderRadius: '12px',
-                  padding: '28px 24px',
-                  transition: 'all 0.35s ease',
-                }}
-              >
-                <div className="mb-3 mx-auto" style={{ width: '150px', height: '150px', position: 'relative' }}>
-                  <img
-                    src="/Sachin Dev.jpeg"
-                    alt="Sachin Dev"
-                    className="img-fluid rounded-circle"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center 20%',
-                      border: '2.5px solid #C8A24A',
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
-                    }}
-                  />
-                </div>
-                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  Sachin Dev
-                </h4>
-                <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14.5px', fontWeight: '700', letterSpacing: '0.4px' }}>
-                  Executive Member
-                </span>
-                <span className="d-block mb-3 text-white-50" style={{ fontSize: '13.5px', fontWeight: '500' }}>
-                  The Global Trade and Investment Collaboration Consortium (GTICC)
-                </span>
-                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
-                  Barrister and Solicitor in Ontario, Canada, and Founder of DA Law Group with over 20 years of professional experience. Renowned for strategic expertise in corporate law, mergers &amp; acquisitions, corporate governance, regulatory compliance, and cross-border commercial business advisory.
-                </p>
-              </div>
-            </div>
-
-            {/* Team Member 3: Sir John Martin Thomas */}
-            <div className="col-lg-4 col-md-6 col-sm-12">
+            {/* Team Member 2: Sir John Martin Thomas */}
+            <div className="col-lg-5 col-md-6 col-sm-12">
               <div
                 className="gticc-card h-100 d-flex flex-column text-center"
                 style={{
@@ -256,6 +214,63 @@ export default function AboutUs() {
                 </span>
                 <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
                   President of Swiss Family Investors Circle, New Delhi, leading institutional capital engagement, sovereign family office syndications, and bilateral investment collaboration between European and Asian financial ecosystems.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================================= Our Team Members ================================= */}
+      <section className="gticc-section position-relative" style={{ borderTop: '1px solid rgba(200, 162, 74, 0.15)' }}>
+        <div className="container">
+          <div className="section-title text-center mb-5">
+            <span className="gticc-section-kicker" style={{ color: '#C8A24A' }}>EXECUTIVE ADVISORS &amp; SPECIALISTS</span>
+            <h2 className="title text-white">Our Team Members</h2>
+            <p className="text-white-50 mx-auto" style={{ maxWidth: '720px', fontSize: '17px', lineHeight: '1.6' }}>
+              Distinguished legal counsels, trade practitioners, and regional advisors contributing specialized domain leadership across the GTICC ecosystem.
+            </p>
+          </div>
+
+          <div className="row g-4 justify-content-center">
+            {/* Team Member: Sachin Dev */}
+            <div className="col-lg-5 col-md-8 col-sm-12">
+              <div
+                className="gticc-card h-100 d-flex flex-column text-center"
+                style={{
+                  background: 'rgba(6, 21, 46, 0.45)',
+                  border: '1px solid rgba(200, 162, 74, 0.22)',
+                  borderRadius: '12px',
+                  padding: '28px 24px',
+                  transition: 'all 0.35s ease',
+                }}
+              >
+                <div className="mb-3 mx-auto" style={{ width: '150px', height: '150px', position: 'relative' }}>
+                  <img
+                    src="/Sachin Dev.jpeg"
+                    alt="Sachin Dev"
+                    className="img-fluid rounded-circle"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center 20%',
+                      border: '2.5px solid #C8A24A',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+                    }}
+                  />
+                </div>
+                <h4 className="text-white mb-1" style={{ fontSize: '19px', fontWeight: '700', minHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  Sachin Dev
+                </h4>
+                <span className="d-block mb-1" style={{ color: '#C8A24A', fontSize: '14.5px', fontWeight: '700', letterSpacing: '0.4px' }}>
+                  Executive Member
+                </span>
+                <span className="d-block mb-3 text-white-50" style={{ fontSize: '13.5px', fontWeight: '500' }}>
+                  The Global Trade and Investment Collaboration Consortium (GTICC)
+                </span>
+                <p className="text-white-50 mb-0" style={{ fontSize: '14px', lineHeight: '1.6', flexGrow: 1 }}>
+                  Barrister and Solicitor in Ontario, Canada, and Founder of DA Law Group with over 20 years of professional experience. Renowned for strategic expertise in corporate law, mergers &amp; acquisitions, corporate governance, regulatory compliance, and cross-border commercial business advisory.
                 </p>
               </div>
             </div>
